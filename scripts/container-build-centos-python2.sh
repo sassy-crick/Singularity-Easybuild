@@ -31,31 +31,32 @@ fi
 # we are creating the singularity file
 
 cat > Singularity."${eb_file%.eb}" << 'EOF'
-Bootstrap: debootstrap
-OSVersion: buster
-MirrorURL: http://httpredir.debian.org/debian
+Bootstrap: yum
+OSVersion: 7
+MirrorURL: http://mirror.centos.org/centos-%{OSVERSION}/%{OSVERSION}/os/x86_64/
+Include: yum
 
 %post
-apt update 
-apt dist-upgrade -y 
-apt install -y python3 python3-setuptools lmod
-apt install -y python3-pip
-apt install -y bzip2 gzip tar zip unzip xz-utils 
-apt install -y curl wget
-apt install -y patch make
-apt install -y file git debianutils
-apt install -y gcc-8 
-apt install -y libibverbs-dev 
-apt install -y libssl-dev
-apt install -y binutils
-apt install -y procps
+yum --assumeyes update
+yum install --quiet --assumeyes epel-release
+yum install --quiet --assumeyes python setuptools Lmod
+yum install --quiet --assumeyes python-pip
+yum install --quiet --assumeyes bzip2 gzip tar zip unzip xz
+yum install --quiet --assumeyes curl wget
+yum install --quiet --assumeyes patch make
+yum install --quiet --assumeyes file git which
+yum install --quiet --assumeyes gcc-c++
+yum install --quiet --assumeyes perl-Data-Dumper
+yum install --quiet --assumeyes perl-Thread-Queue
+yum install --quiet --assumeyes libibverbs-dev libibverbs-devel rdma-core-devel
+yum install --quiet --assumeyes openssl-devel libssl-dev libopenssl-devel openssl
 
-# install EasyBuild using pip3
-pip3 install -U pip
-pip3 install wheel
-pip3 install -U setuptools
-pip3 install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
-pip3 install easybuild
+# install EasyBuild using pip
+pip install -U pip
+pip install wheel
+pip install -U setuptools
+pip install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
+pip install easybuild
 
 # create 'easybuild' user (if missing)
 id easybuild || useradd easybuild
