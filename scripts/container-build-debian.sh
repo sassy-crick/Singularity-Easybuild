@@ -146,7 +146,7 @@ module use /app/modules/all
 EOF
 
 mod1=$(echo "$eb_file" | cut -d '-' -f 1 )
-mod2=$(echo "$eb_file" | cut -d '-' -f 2- )
+mod2=$(echo "${eb_file%.eb}" | cut -d '-' -f 2- )
 module_name="$mod1/$mod2"
 echo "module load $module_name " >> Singularity."${eb_file%.eb}" 
 echo " " >> Singularity."${eb_file%.eb}" 
