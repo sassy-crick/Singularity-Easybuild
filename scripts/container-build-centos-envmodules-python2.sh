@@ -5,7 +5,6 @@
 # We are using Python3 here instead of the no longer supported Python2
 
 
-
 # We need to know the name of the Easybuild build file:
 if [ ! -z "$1" ]; then
         eb_file="$1"
@@ -28,9 +27,12 @@ else
 	fi
 fi
 
+# Some definitions
+filename=Singularity."${eb_file%.eb}-envmod"
+
 # we are creating the singularity file
 
-cat > Singularity."${eb_file%.eb}" << 'EOF'
+cat > "$filename" << 'EOF'
 Bootstrap: yum
 OSVersion: 7
 MirrorURL: http://mirror.centos.org/centos-%{OSVERSION}/%{OSVERSION}/os/x86_64/
@@ -75,12 +77,12 @@ EOF
 # In this case, we correct the build file and add it here
 
 if [ ! -z "$eb_file2" ]; then
-	echo "cat > /home/easybuild/$eb_file2 << EOD" >> Singularity."${eb_file%.eb}"
-	cat "$eb_file2" >>  Singularity."${eb_file%.eb}"
-	echo "EOD" >> Singularity."${eb_file%.eb}"
+	echo "cat > /home/easybuild/$eb_file2 << EOD" >> "$filename"
+	cat "$eb_file2" >>  "$filename"
+	echo "EOD" >> "$filename"
 fi
 
-cat >> Singularity."${eb_file%.eb}" << 'EOF'
+cat >> "$filename" << 'EOF'
 # configure EasyBuild
 cat > /home/easybuild/eb-install.sh << 'EOD'
 #!/bin/bash  
@@ -94,7 +96,7 @@ EOF
 
 # If there is another build file, we add it before the main one
 if [ ! -z "$eb_file2" ]; then
-cat >> Singularity."${eb_file%.eb}" << EOF
+cat >> "$filename" << EOF
 echo "eb /home/easybuild/$eb_file2 --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
 EOF
 fi
@@ -102,11 +104,11 @@ fi
 # We are adding the normal build file to the Singularity script
 # We need to do it this way as we need to replace the variable
 
-cat >> Singularity."${eb_file%.eb}" << EOF
+cat >> "$filename" << EOF
 echo "eb $eb_file --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
 EOF
 
-cat >> Singularity."${eb_file%.eb}" << 'EOF'
+cat >> "$filename" << 'EOF'
 cat >> /home/easybuild/eb-install.sh << 'EOD'
 EOD
 
@@ -136,8 +138,8 @@ EOF
 mod1=$(echo "$eb_file" | cut -d '-' -f 1 )
 mod2=$(echo "${eb_file%.eb}" | cut -d '-' -f 2- )
 module_name="$mod1/$mod2"
-echo "module load $module_name " >> Singularity."${eb_file%.eb}" 
-echo " " >> Singularity."${eb_file%.eb}" 
-echo "%labels" >> Singularity."${eb_file%.eb}" 
-echo "${eb_file%.eb}" >> Singularity."${eb_file%.eb}" 
+echo "module load $module_name " >> "$filename" 
+echo " " >> "$filename" 
+echo "%labels" >> "$filename" 
+echo "${eb_file%.eb}" >> "$filename" 
 
