@@ -120,7 +120,7 @@ eval "$@"
 
 %environment
 # make sure that 'module' is defined
-source /etc/profile
+. /etc/profile
 # purge any modules that may be loaded outside container
 unset LOADEDMODULES
 unset _LMFILES_
