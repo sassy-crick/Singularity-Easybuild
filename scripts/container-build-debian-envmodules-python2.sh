@@ -40,8 +40,8 @@ MirrorURL: http://httpredir.debian.org/debian
 %post
 apt update 
 apt dist-upgrade -y 
-apt install -y python3 python3-setuptools environment-modules tcl
-apt install -y python3-pip
+apt install -y python python-setuptools environment-modules tcl
+apt install -y python-pip
 apt install -y bzip2 gzip tar zip unzip xz-utils 
 apt install -y curl wget
 apt install -y patch make
@@ -52,11 +52,11 @@ apt install -y libssl-dev
 apt install -y binutils
 
 # install EasyBuild using pip3
-pip3 install -U pip
-pip3 install wheel
-pip3 install -U setuptools
-pip3 install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
-pip3 install easybuild
+pip install -U pip
+pip install wheel
+pip install -U setuptools
+pip install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
+pip install easybuild
 
 # create 'easybuild' user (if missing)
 id easybuild || useradd easybuild
