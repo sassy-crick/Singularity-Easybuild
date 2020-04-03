@@ -34,7 +34,7 @@ filename=Singularity."${eb_file%.eb}-envmod"
 
 cat > "$filename" << 'EOF'
 Bootstrap: debootstrap
-OSVersion: buster
+OSVersion: stretch 
 MirrorURL: http://httpredir.debian.org/debian
 
 %post
