@@ -46,7 +46,7 @@ apt install -y bzip2 gzip tar zip unzip xz-utils
 apt install -y curl wget
 apt install -y patch make
 apt install -y file git debianutils
-apt install -y gcc-8 
+apt install -y gcc 
 apt install -y libibverbs-dev 
 apt install -y libssl-dev
 apt install -y binutils
