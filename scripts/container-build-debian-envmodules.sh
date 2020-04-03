@@ -66,8 +66,6 @@ if [ ! -d /app ]; then mkdir -p /app; chown easybuild:easybuild -R /app; fi
 if [ ! -d /scratch ]; then mkdir -p /scratch; chown easybuild:easybuild -R /scratch; fi
 if [ ! -d /home/easybuild ]; then mkdir -p /home/easybuild; chown easybuild:easybuild -R /home/easybuild;fi
 
-EOD
-
 # verbose commands, exit on first error
 set -ve
 set -o noclobber
@@ -109,7 +107,6 @@ echo "eb $eb_file --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl
 EOF
 
 cat >> "$filename" << 'EOF'
-cat >> /home/easybuild/eb-install.sh << 'EOD'
 
 chmod a+x /home/easybuild/eb-install.sh
 

@@ -109,8 +109,6 @@ echo "eb $eb_file --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl
 EOF
 
 cat >> "$filename" << 'EOF'
-cat >> /home/easybuild/eb-install.sh << 'EOD'
-EOD
 
 chmod a+x /home/easybuild/eb-install.sh
 
