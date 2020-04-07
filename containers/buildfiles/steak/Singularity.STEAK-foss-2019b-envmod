@@ -1,0 +1,112 @@
+Bootstrap: debootstrap
+OSVersion: stretch 
+MirrorURL: http://httpredir.debian.org/debian
+
+%post
+apt update 
+apt dist-upgrade -y 
+apt install -y python python-setuptools environment-modules tcl
+apt install -y python-pip
+apt install -y bzip2 gzip tar zip unzip xz-utils 
+apt install -y curl wget
+apt install -y patch make
+apt install -y file git debianutils
+apt install -y gcc 
+apt install -y libibverbs-dev 
+apt install -y libssl-dev
+apt install -y binutils
+
+# install EasyBuild using pip3
+pip install -U pip
+pip install wheel
+pip install -U setuptools
+pip install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
+pip install easybuild
+
+# create 'easybuild' user (if missing)
+id easybuild || useradd easybuild
+
+# create /app software installation prefix + /scratch sandbox directory
+if [ ! -d /app ]; then mkdir -p /app; chown easybuild:easybuild -R /app; fi
+if [ ! -d /scratch ]; then mkdir -p /scratch; chown easybuild:easybuild -R /scratch; fi
+if [ ! -d /home/easybuild ]; then mkdir -p /home/easybuild; chown easybuild:easybuild -R /home/easybuild;fi
+
+# verbose commands, exit on first error
+set -ve
+set -o noclobber
+cat > /home/easybuild/STEAK-foss-2019b.eb << EOD
+# Contribution from the NIHR Biomedical Research Centre
+# Guy's and St Thomas' NHS Foundation Trust and King's College London
+# uploaded by J. Sassmannshausen
+
+easyblock = 'MakeCp'
+
+name = 'STEAK'
+version = 'master'
+
+homepage = 'https://omictools.com/steak-tool'
+description = """Detects integrations of any sort in high-throughput 
+sequencing (HTS) data. STEAK was built for validating and discovering 
+transposable element (TE) and retroviral integrations in a variety of 
+HTS data. The software performs on both single-end (SE) and paired-end (
+PE) libraries and on a variety of HTS sequencing strategies. It can 
+be applied to a broad range of research interests and clinical uses 
+such as population genetic studies and detecting polymorphic integrations."""
+
+toolchain = {'name': 'foss', 'version': '2019b'}
+
+sources = ['steak.zip']
+checksums = ['c5bd7d5aeeedd67e5fc17c043024552d05690080681c6e9be154b007b36f1f5a']
+
+dependencies = [
+    ('Boost', '1.71.0'),
+    ('Python', '2.7.16'),
+]
+
+modextrapaths = {'PATH': ''}
+
+files_to_copy = [(['steak'], 'bin'), "README.md", "GPLv3.txt"]
+
+sanity_check_paths = {
+    'files': ['bin/steak'],
+    'dirs': [],
+}
+
+moduleclass = 'bio'
+EOD
+# configure EasyBuild
+cat > /home/easybuild/eb-install.sh << 'EOD'
+#!/bin/bash  
+export EASYBUILD_PREFIX=/scratch 
+export EASYBUILD_TMPDIR=/scratch/tmp 
+export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources 
+export EASYBUILD_INSTALLPATH=/app 
+export EASYBUILD_PARALLEL=12
+EOD
+echo "eb /home/easybuild/STEAK-foss-2019b.eb --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
+
+chmod a+x /home/easybuild/eb-install.sh
+
+su -l easybuild -c /home/easybuild/eb-install.sh
+
+# cleanup, everything in /scratch is assumed to be temporary
+rm -rf /scratch/*
+
+%runscript
+eval "$@"
+
+%environment
+# make sure that 'module' is defined
+. /etc/profile
+# purge any modules that may be loaded outside container
+unset LOADEDMODULES
+unset _LMFILES_
+# avoid picking up modules from outside of container
+module unuse $MODULEPATH
+# pick up modules installed in /app
+module use /app/modules/all
+# load module(s) corresponding to installed software
+module load STEAK/master-foss-2019b  
+ 
+%labels
+STEAK-foss-2019b
