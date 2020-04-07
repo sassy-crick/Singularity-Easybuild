@@ -34,28 +34,26 @@ if [ ! -d /home/easybuild ]; then mkdir -p /home/easybuild; chown easybuild:easy
 # verbose commands, exit on first error
 set -ve
 set -o noclobber
-cat > /home/easybuild/PLINK-2.00a2.3LM-x86_64.eb << EOD
-easyblock = 'PackedBinary'
 
-name = 'PLINK'
-version = '2.00a2.3LM-x86_64'
+cat > /home/easybuild/tbb-2018_U5-GCCcore-7.3.0.eb << 'EOF'
+name = 'tbb'
+version = '2018_U5'
+homepage = 'https://01.org/tbb/'
+description = """Intel(R) Threading Building Blocks (Intel(R) TBB) lets you easily write parallel C++ programs that
+ take full advantage of multicore performance, that are portable, composable and have future-proof scalability."""
+toolchain = {'name': 'GCCcore', 'version': '7.3.0'}
+source_urls = ['https://github.com/01org/tbb/archive/']
+sources = ['%(version)s.tar.gz']
+checksums = [
+    ('c4c2896af527392496c5e01ef8579058a71b6eebbd695924cd138841c13f07be',
+     'b8dbab5aea2b70cf07844f86fa413e549e099aa3205b6a04059ca92ead93a372'),
+]
+builddependencies = [
+    ('binutils', '2.30')
+]
+moduleclass = 'lib'
+EOF
 
-homepage = 'https://www.cog-genomics.org/plink/2.0/'
-description = 'Whole-genome association analysis toolset'
-
-toolchain = SYSTEM
-
-source_urls = ['https://s3.amazonaws.com/plink2-assets/alpha2']
-sources = ['plink2_linux_x86_64.zip']
-checksums = ['3fa20a2058df542e928b11d715cc314c01d7c5961525b55fd17a088e6caa9cc9']
-
-sanity_check_paths = {
-    'files': ['plink2'],
-    'dirs': [],
-}
-
-moduleclass = 'bio'
-EOD
 # configure EasyBuild
 cat > /home/easybuild/eb-install.sh << 'EOD'
 #!/bin/bash  
@@ -63,9 +61,10 @@ export EASYBUILD_PREFIX=/scratch
 export EASYBUILD_TMPDIR=/scratch/tmp 
 export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources 
 export EASYBUILD_INSTALLPATH=/app 
-export EASYBUILD_PARALLEL=4
+export EASYBUILD_PARALLEL=12
+eb /home/easybuild/tbb-2018_U5-GCCcore-7.3.0.eb --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl
 EOD
-echo "eb /home/easybuild/PLINK-2.00a2.3LM-x86_64.eb --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
+echo "eb Bowtie-1.2.3-foss-2018b.eb --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
 
 chmod a+x /home/easybuild/eb-install.sh
 
@@ -88,7 +87,7 @@ module unuse $MODULEPATH
 # pick up modules installed in /app
 module use /app/modules/all
 # load module(s) corresponding to installed software
-module load PLINK/2.00a2.3LM-x86_64 
+module load Bowtie/1.2.3-foss-2018b 
  
 %labels
-PLINK-2.00a2.3LM-x86_64
+Bowtie-1.2.3-foss-2018b

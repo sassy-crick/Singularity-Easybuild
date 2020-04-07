@@ -34,28 +34,6 @@ if [ ! -d /home/easybuild ]; then mkdir -p /home/easybuild; chown easybuild:easy
 # verbose commands, exit on first error
 set -ve
 set -o noclobber
-cat > /home/easybuild/PLINK-2.00a2.3LM-x86_64.eb << EOD
-easyblock = 'PackedBinary'
-
-name = 'PLINK'
-version = '2.00a2.3LM-x86_64'
-
-homepage = 'https://www.cog-genomics.org/plink/2.0/'
-description = 'Whole-genome association analysis toolset'
-
-toolchain = SYSTEM
-
-source_urls = ['https://s3.amazonaws.com/plink2-assets/alpha2']
-sources = ['plink2_linux_x86_64.zip']
-checksums = ['3fa20a2058df542e928b11d715cc314c01d7c5961525b55fd17a088e6caa9cc9']
-
-sanity_check_paths = {
-    'files': ['plink2'],
-    'dirs': [],
-}
-
-moduleclass = 'bio'
-EOD
 # configure EasyBuild
 cat > /home/easybuild/eb-install.sh << 'EOD'
 #!/bin/bash  
@@ -65,7 +43,7 @@ export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources
 export EASYBUILD_INSTALLPATH=/app 
 export EASYBUILD_PARALLEL=4
 EOD
-echo "eb /home/easybuild/PLINK-2.00a2.3LM-x86_64.eb --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
+echo "eb GEMMA-0.98.1-foss-2018b.eb --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
 
 chmod a+x /home/easybuild/eb-install.sh
 
@@ -88,7 +66,7 @@ module unuse $MODULEPATH
 # pick up modules installed in /app
 module use /app/modules/all
 # load module(s) corresponding to installed software
-module load PLINK/2.00a2.3LM-x86_64 
+module load GEMMA/0.98.1-foss-2018b 
  
 %labels
-PLINK-2.00a2.3LM-x86_64
+GEMMA-0.98.1-foss-2018b
