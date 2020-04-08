@@ -133,7 +133,7 @@ eval "$@"
 
 %environment
 # make sure that 'module' and 'ml' commands are defined
-source /etc/profile
+. /etc/profile
 # increase threshold time for Lmod to write cache in $HOME (which we don't want to do)
 export LMOD_SHORT_TIME=86400
 # purge any modules that may be loaded outside container
