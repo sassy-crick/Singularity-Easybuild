@@ -2,7 +2,6 @@
 # Script to build a Singularity build file and builds the container
 # all in one go. The only thing we need to know is the name of the 
 # EasyBuild build file.
-# We are using Python3 here instead of the no longer supported Python2
 
 
 # We need to know the name of the Easybuild build file:
@@ -28,7 +27,7 @@ else
 fi
 
 # Some definitions
-filename=Singularity."${eb_file%.eb}-envmod"
+filename=Singularity."${eb_file%.eb}-envmod-centos7"
 
 # we are creating the singularity file
 
