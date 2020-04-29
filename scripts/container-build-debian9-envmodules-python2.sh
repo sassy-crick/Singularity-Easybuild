@@ -51,7 +51,7 @@ apt install -y libibverbs-dev
 apt install -y libssl-dev
 apt install -y binutils
 
-# install EasyBuild using pip3
+# install EasyBuild using pip
 pip install -U pip
 pip install wheel
 pip install -U setuptools
