@@ -31,6 +31,8 @@ if [ ! -d /app ]; then mkdir -p /app; chown easybuild:easybuild -R /app; fi
 if [ ! -d /scratch ]; then mkdir -p /scratch; chown easybuild:easybuild -R /scratch; fi
 if [ ! -d /home/easybuild ]; then mkdir -p /home/easybuild; chown easybuild:easybuild -R /home/easybuild;fi
 
+EOD
+
 # verbose commands, exit on first error
 set -ve
 set -o noclobber
@@ -43,7 +45,8 @@ export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources
 export EASYBUILD_INSTALLPATH=/app 
 export EASYBUILD_PARALLEL=4
 EOD
-echo "eb tabix-0.2.6-GCCcore-7.3.0.eb --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
+echo "eb PLINK-2.00-alpha2-x86_64.eb --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
+cat >> /home/easybuild/eb-install.sh << 'EOD'
 
 chmod a+x /home/easybuild/eb-install.sh
 
@@ -66,7 +69,8 @@ module unuse $MODULEPATH
 # pick up modules installed in /app
 module use /app/modules/all
 # load module(s) corresponding to installed software
-module load tabix/0.2.6-GCCcore-7.3.0 
+module load PLINK/2.00-alpha2-x86_64 
  
 %labels
-tabix-0.2.6-GCCcore-7.3.0
+Author  J. Sassmannshausen <rosalind-support@kcl.ac.uk>
+PLINK-2.00-alpha2-x86_64

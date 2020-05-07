@@ -148,4 +148,5 @@ module use /app/modules/all
 module load Salmon/1.1.0-gompi-2019b 
  
 %labels
+Author  J. Sassmannshausen <rosalind-support@kcl.ac.uk>
 Salmon-1.1.0-gompi-2019b

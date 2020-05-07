@@ -110,4 +110,5 @@ module use /app/modules/all
 module load MEME/5.1.1-foss-2019b-Perl-5.30.0-Python-3.7.4 
  
 %labels
+Author  J. Sassmannshausen <rosalind-support@kcl.ac.uk>
 MEME-5.1.1-foss-2019b-Perl-5.30.0-Python-3.7.4

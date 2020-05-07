@@ -155,5 +155,6 @@ module_name="$mod1/$mod2"
 echo "module load $module_name " >> "$filename" 
 echo " " >> "$filename" 
 echo "%labels" >> "$filename" 
+echo "Author  J. Sassmannshausen <rosalind-support@kcl.ac.uk>" >> "$filename"
 echo "${eb_file%.eb}" >> "$filename" 
 

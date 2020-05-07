@@ -1,37 +1,3 @@
-#!/bin/bash
-# Script to build a Singularity build file and builds the container
-# all in one go. The only thing we need to know is the name of the 
-# EasyBuild build file.
-
-
-# We need to know the name of the Easybuild build file:
-if [ ! -z "$1" ]; then
-        eb_file="$1"
-else
-        read -p 'Easybuild recipe: ' eb_file
-fi
-
-# Sometimes we need to provide a Easybuild build file, for example as checksums 
-# have changed
-if [ ! -z "$2" ]; then
-   eb_file2="$2"
-else
-   read -p 'Do we need a second Easybuild recipe (y/N)?: ' var
-	if [ "$var" == "y" ]; then
-	read -p 'Easybuild recipe: ' eb_file2
-		if [ ! -f "$eb_file2" ]; then
-		echo "The file does not exist! Please place the correct build file in the current directory!"
-		exit 2
-		fi
-	fi
-fi
-
-# Some definitions
-filename=Singularity."${eb_file%.eb}-envmod-centos7"
-
-# we are creating the singularity file
-
-cat > "$filename" << 'EOF'
 Bootstrap: yum
 OSVersion: 7
 MirrorURL: http://mirror.centos.org/centos-%{OSVERSION}/%{OSVERSION}/os/x86_64/
@@ -70,18 +36,49 @@ if [ ! -d /home/easybuild ]; then mkdir -p /home/easybuild; chown easybuild:easy
 # verbose commands, exit on first error
 set -ve
 set -o noclobber
-EOF
+cat > /home/easybuild/STEAK-20190912-foss-2019b-Python-2.7.16.eb << EOD
+# Contribution from the NIHR Biomedical Research Centre
+# Guy's and St Thomas' NHS Foundation Trust and King's College London
+# uploaded by J. Sassmannshausen
 
-# We check if we require another build file, as for example the checksum is incorrect
-# In this case, we correct the build file and add it here
+easyblock = 'MakeCp'
 
-if [ ! -z "$eb_file2" ]; then
-	echo "cat > /home/easybuild/$eb_file2 << EOD" >> "$filename"
-	cat "$eb_file2" >>  "$filename"
-	echo "EOD" >> "$filename"
-fi
+name = 'STEAK'
+version = '2019.09.12'
+versionsuffix = "-Python-%(pyver)s"
 
-cat >> "$filename" << 'EOF'
+homepage = 'https://omictools.com/steak-tool'
+description = """Detects integrations of any sort in high-throughput 
+sequencing (HTS) data. STEAK was built for validating and discovering 
+transposable element (TE) and retroviral integrations in a variety of 
+HTS data. The software performs on both single-end (SE) and paired-end (
+PE) libraries and on a variety of HTS sequencing strategies. It can 
+be applied to a broad range of research interests and clinical uses 
+such as population genetic studies and detecting polymorphic integrations."""
+
+toolchain = {'name': 'foss', 'version': '2019b'}
+
+source_urls = ['https://github.com/applevir/STEAK/archive/']
+sources = [
+    {'download_filename': '43f079da8bbc37a34efd7b3a0a6955a13f6d4137.tar.gz',
+     'filename': 'steak-20190912.tar.gz'}
+]
+checksums = ['f200865e2588c2a037527ad4cf8d2b6539217d7e9bf8f515b99e4288eb682b37']
+
+dependencies = [
+    ('Boost', '1.71.0'),
+    ('Python', '2.7.16'),
+]
+
+files_to_copy = [(['steak'], 'bin'), "README.md", "GPLv3.txt"]
+
+sanity_check_paths = {
+    'files': ['bin/steak'],
+    'dirs': [],
+}
+
+moduleclass = 'bio'
+EOD
 # configure EasyBuild
 cat > /home/easybuild/eb-install.sh << 'EOD'
 #!/bin/bash  
@@ -91,23 +88,7 @@ export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources
 export EASYBUILD_INSTALLPATH=/app 
 export EASYBUILD_PARALLEL=4
 EOD
-EOF
-
-# If there is another build file, we add it before the main one
-if [ ! -z "$eb_file2" ]; then
-cat >> "$filename" << EOF
-echo "eb /home/easybuild/$eb_file2 --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
-EOF
-fi
-
-# We are adding the normal build file to the Singularity script
-# We need to do it this way as we need to replace the variable
-
-cat >> "$filename" << EOF
-echo "eb $eb_file --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
-EOF
-
-cat >> "$filename" << 'EOF'
+echo "eb /home/easybuild/STEAK-20190912-foss-2019b-Python-2.7.16.eb --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
 
 chmod a+x /home/easybuild/eb-install.sh
 
@@ -130,14 +111,8 @@ module unuse $MODULEPATH
 # pick up modules installed in /app
 module use /app/modules/all
 # load module(s) corresponding to installed software
-EOF
-
-mod1=$(echo "$eb_file" | cut -d '-' -f 1 )
-mod2=$(echo "${eb_file%.eb}" | cut -d '-' -f 2- )
-module_name="$mod1/$mod2"
-echo "module load $module_name " >> "$filename" 
-echo " " >> "$filename" 
-echo "%labels" >> "$filename" 
-echo "Author  J. Sassmannshausen <rosalind-support@kcl.ac.uk>" >> "$filename"
-echo "${eb_file%.eb}" >> "$filename" 
-
+module load STEAK/2019.09.12-foss-2019b-Python-2.7.16 
+ 
+%labels
+Author  J. Sassmannshausen <rosalind-support@kcl.ac.uk>
+STEAK-20190912-foss-2019b-Python-2.7.16

@@ -71,4 +71,5 @@ module use /app/modules/all
 module load BCFtools/1.3-foss-2016b 
  
 %labels
+Author  J. Sassmannshausen <rosalind-support@kcl.ac.uk>
 BCFtools-1.3-foss-2016b
