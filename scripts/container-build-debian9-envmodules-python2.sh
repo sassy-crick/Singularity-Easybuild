@@ -49,7 +49,7 @@ apt install -y file git debianutils
 apt install -y gcc 
 apt install -y libibverbs-dev 
 apt install -y libssl-dev
-apt install -y binutils
+apt install -y binutils libthread-queue-any-perl
 
 # install EasyBuild using pip
 pip install -U pip
