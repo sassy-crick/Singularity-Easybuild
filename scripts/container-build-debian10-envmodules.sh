@@ -89,13 +89,14 @@ export EASYBUILD_TMPDIR=/scratch/tmp
 export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources 
 export EASYBUILD_INSTALLPATH=/app 
 export EASYBUILD_PARALLEL=4
+alias eb="--robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl --download-timeout=1000"
 EOD
 EOF
 
 # If there is another build file, we add it before the main one
 if [ ! -z "$eb_file2" ]; then
 cat >> "$filename" << EOF
-echo "eb /home/easybuild/$eb_file2 --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
+echo "eb /home/easybuild/$eb_file2" >>  /home/easybuild/eb-install.sh 
 EOF
 fi
 
@@ -103,7 +104,7 @@ fi
 # We need to do it this way as we need to replace the variable
 
 cat >> "$filename" << EOF
-echo "eb $eb_file --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
+echo "eb $eb_file" >>  /home/easybuild/eb-install.sh 
 EOF
 
 cat >> "$filename" << 'EOF'
