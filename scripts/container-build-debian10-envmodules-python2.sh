@@ -128,8 +128,8 @@ EOF
 # If there is another build file, we add it before the main one
 if [ ! -z "$eb_file2" ]; then
 cat >> "$filename" << EOF
+echo "eb --fetch /home/easybuild/$eb_file2 " >>  /home/easybuild/eb-install.sh 
 echo "eb /home/easybuild/$eb_file2 " >>  /home/easybuild/eb-install.sh 
-echo "eb --robot --modules-tool=EnvironmentModules --module-syntax=Tcl /home/easybuild/$eb_file2 " >>  /home/easybuild/eb-install.sh 
 EOF
 fi
 
@@ -137,8 +137,8 @@ fi
 # We need to do it this way as we need to replace the variable
 
 cat >> "$filename" << EOF
-echo "eb --robot --modules-tool=EnvironmentModules --module-syntax=Tcl --fetch --download-timeout=1000 $eb_file " >>  /home/easybuild/eb-install.sh 
-echo "eb --robot --modules-tool=EnvironmentModules --module-syntax=Tcl $eb_file " >>  /home/easybuild/eb-install.sh 
+echo "eb --fetch $eb_file " >>  /home/easybuild/eb-install.sh 
+echo "eb $eb_file " >>  /home/easybuild/eb-install.sh 
 EOF
 
 cat >> "$filename" << 'EOF'

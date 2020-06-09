@@ -108,7 +108,7 @@ EOF
 # If there is another build file, we add it before the main one
 if [ ! -z "$eb_file2" ]; then
 cat >> "$filename" << EOF
-echo "eb  --fetch/home/easybuild/$eb_file2" >>  /home/easybuild/eb-install.sh 
+echo "eb  --fetch /home/easybuild/$eb_file2" >>  /home/easybuild/eb-install.sh 
 echo "eb /home/easybuild/$eb_file2" >>  /home/easybuild/eb-install.sh 
 EOF
 fi
