@@ -23,7 +23,7 @@ This work would not be possible without EasyBuild and I am greatful to the proje
 
 Links:
 -----
-[Singularity] (https://sylabs.io/guides/3.5/admin-guide/installation.html)
-[Vagrant] (https://www.vagrantup.com/intro/getting-started)
-[Easybuild] (https://easybuild.readthedocs.io/en/latest/)
+Singularity: https://sylabs.io/guides/3.5/admin-guide/installation.html
+Vagrant: https://www.vagrantup.com/intro/getting-started
+Easybuild: https://easybuild.readthedocs.io/en/latest
 
