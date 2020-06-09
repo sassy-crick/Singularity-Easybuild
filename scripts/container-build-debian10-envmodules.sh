@@ -118,7 +118,7 @@ export EASYBUILD_TMPDIR=/scratch/tmp
 export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources 
 export EASYBUILD_INSTALLPATH=/app 
 export EASYBUILD_PARALLEL=4
-alias eb="eb --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl --download-timeout=1000"
+alias eb="eb --robot --modules-tool=EnvironmentModules --module-syntax=Tcl --download-timeout=1000"
 EOD
 EOF
 
