@@ -58,8 +58,25 @@ pip install -U setuptools
 pip install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
 pip install easybuild
 
+# We need to patch the environment module version for Buster:
+cat >> /root/eb-envmod.path << 'EOD'
+--- modules.py.orig      2020-06-09 14:06:45.709906123 +0100
++++ modules.py   2020-06-09 14:04:19.239060817 +0100
+@@ -1260,6 +1260,8 @@
+     """Interface to environment modules 4.0+"""
+     NAME = "Environment Modules v4"
+     COMMAND = os.path.join(os.getenv('MODULESHOME', 'MODULESHOME_NOT_DEFINED'), 'libexec', 'modulecmd.tcl')
++    if not os.path.exists(COMMAND):
++        COMMAND = os.getenv('MODULES_CMD', 'MODULES_CMD_NOT_DEFINED')
+     REQ_VERSION = '4.0.0'
+     MAX_VERSION = None
+     VERSION_REGEXP = r'^Modules\s+Release\s+(?P<version>\d\S*)\s'
+EOD
+
+patch -d /usr/local/lib/python2.7/dist-packages/easybuild/tools -p0 < /root/eb-envmod.path 
+
 # create 'easybuild' user (if missing)
-id easybuild || useradd easybuild
+id easybuild || useradd -s /bin/bash -m easybuild
 
 # create /app software installation prefix + /scratch sandbox directory
 if [ ! -d /app ]; then mkdir -p /app; chown easybuild:easybuild -R /app; fi
@@ -84,29 +101,35 @@ fi
 # This does all the magic for the automatic installation
 
 cat >> "$filename" << 'EOF'
+# We set this so if we need to open the container again, we got the environment set up correctly
+cat >> /home/easybuild/.bashrc << 'EOG'
+export EASYBUILD_PREFIX=/scratch
+export EASYBUILD_TMPDIR=/scratch/tmp
+export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources
+export EASYBUILD_INSTALLPATH=/app
+export EASYBUILD_PARALLEL=4
+export MODULEPATH=/app/modules/all
+alias eb="eb --robot --modules-tool=EnvironmentModules --module-syntax=Tcl --download-timeout=1000"
+EOG
+
 # configure EasyBuild
 cat > /home/easybuild/eb-install.sh << 'EOD'
 #!/bin/bash  
+shopt -s expand_aliases
 export EASYBUILD_PREFIX=/scratch 
 export EASYBUILD_TMPDIR=/scratch/tmp 
 export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources 
 export EASYBUILD_INSTALLPATH=/app 
 export EASYBUILD_PARALLEL=4
+alias eb="eb --robot --modules-tool=EnvironmentModules --module-syntax=Tcl --download-timeout=1000 "
 EOD
-# We set this so if we need to open the container again, we got the environment set up correctly
-
-echo "export EASYBUILD_PREFIX=/scratch" >> /home/easybuild/.bashrc 
-echo "export EASYBUILD_TMPDIR=/scratch/tmp" >> /home/easybuild/.bashrc 
-echo "export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources" >> /home/easybuild/.bashrc 
-echo "export EASYBUILD_INSTALLPATH=/app" >> /home/easybuild/.bashrc 
-echo "export EASYBUILD_PARALLEL=4" >> /home/easybuild/.bashrc 
-echo "alias eb='eb --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl'" >> /home/easybuild/.bashrc 
 EOF
 
 # If there is another build file, we add it before the main one
 if [ ! -z "$eb_file2" ]; then
 cat >> "$filename" << EOF
-echo "eb /home/easybuild/$eb_file2 --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
+echo "eb /home/easybuild/$eb_file2 " >>  /home/easybuild/eb-install.sh 
+echo "eb --robot --modules-tool=EnvironmentModules --module-syntax=Tcl /home/easybuild/$eb_file2 " >>  /home/easybuild/eb-install.sh 
 EOF
 fi
 
@@ -114,7 +137,8 @@ fi
 # We need to do it this way as we need to replace the variable
 
 cat >> "$filename" << EOF
-echo "eb $eb_file --robot --modules-tool=EnvironmentModulesC --module-syntax=Tcl" >>  /home/easybuild/eb-install.sh 
+echo "eb --robot --modules-tool=EnvironmentModules --module-syntax=Tcl --fetch --download-timeout=1000 $eb_file " >>  /home/easybuild/eb-install.sh 
+echo "eb --robot --modules-tool=EnvironmentModules --module-syntax=Tcl $eb_file " >>  /home/easybuild/eb-install.sh 
 EOF
 
 cat >> "$filename" << 'EOF'

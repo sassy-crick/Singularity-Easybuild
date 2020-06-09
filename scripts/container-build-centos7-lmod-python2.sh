@@ -93,21 +93,34 @@ if [ ! -z "$eb_file2" ]; then
 fi
 
 cat >> "$filename" << 'EOF'
+# We set this so if we need to open the container again, we got the environment set up correctly
+cat >> /home/easybuild/.bashrc << 'EOG'
+export EASYBUILD_PREFIX=/scratch
+export EASYBUILD_TMPDIR=/scratch/tmp
+export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources
+export EASYBUILD_INSTALLPATH=/app
+export EASYBUILD_PARALLEL=4
+export MODULEPATH=/app/modules/all
+alias eb="eb --robot --download-timeout=1000"
+EOG
+
 # configure EasyBuild
 cat > /home/easybuild/eb-install.sh << 'EOD'
 #!/bin/bash  
+shopt -s expand_aliases
 export EASYBUILD_PREFIX=/scratch 
 export EASYBUILD_TMPDIR=/scratch/tmp 
 export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources 
 export EASYBUILD_INSTALLPATH=/app 
 export EASYBUILD_PARALLEL=4
-alias eb="--robot --download-timeout=1000"
+alias eb="eb --robot --download-timeout=1000"
 EOD
 EOF
 
 # If there is another build file, we add it before the main one
 if [ ! -z "$eb_file2" ]; then
 cat >> "$filename" << EOF
+echo "eb --fetch /home/easybuild/$eb_file2" >>  /home/easybuild/eb-install.sh 
 echo "eb /home/easybuild/$eb_file2" >>  /home/easybuild/eb-install.sh 
 EOF
 fi
@@ -116,6 +129,7 @@ fi
 # We need to do it this way as we need to replace the variable
 
 cat >> "$filename" << EOF
+echo "eb --fetch $eb_file" >>  /home/easybuild/eb-install.sh 
 echo "eb $eb_file" >>  /home/easybuild/eb-install.sh 
 EOF
 
