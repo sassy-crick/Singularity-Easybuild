@@ -13,6 +13,7 @@ If you don't have Linux, please use Vagrant to set up a virtual Linux environmen
 As the containers are build using Easybuild, you will need to know the names of the Easybuild Configuration files, e.g. GCC-9.3.0.eb.
 
 Thus, it is probably best to install the easybuild-easyconfig files like this:
+
 $ git clone https://github.com/easybuilders/easybuild-easyconfigs.git
 
 and search the easybuild/easyconfigs folder.
