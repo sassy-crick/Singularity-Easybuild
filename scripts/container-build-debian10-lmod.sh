@@ -87,7 +87,7 @@ EOF
 # In this case, we correct the build file and add it here
 
 if [ ! -z "$eb_file2" ]; then
-	echo "cat > /home/easybuild/$eb_file2 << EOD" >> "$filename"
+	echo "cat > /home/easybuild/$eb_file2 << 'EOD'" >> "$filename"
 	cat "$eb_file2" >>  "$filename"
 	echo "EOD" >> "$filename"
 fi
