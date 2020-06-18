@@ -103,13 +103,13 @@ For more details about what you can do with Singularity please refer to their ho
 
 Acknowledgement:
 ---------------
-This work would not be possible without EasyBuild and I am greatful to the project and the community for their help.
+This work would not be possible without EasyBuild,  I am greatful to the project and the community for their help.
 
 Links:
 -----
-Singularity: https://sylabs.io/guides/3.5/admin-guide/installation.html
-Vagrant: https://www.vagrantup.com/intro/getting-started
-Easybuild: https://easybuild.readthedocs.io/en/latest
+Singularity: https://sylabs.io/guides/3.5/admin-guide/installation.html  
+Vagrant: https://www.vagrantup.com/intro/getting-started  
+Easybuild: https://easybuild.readthedocs.io/en/latest  
 
 Updated: 18.6.2020
 
