@@ -80,11 +80,11 @@ is sometimes a problem due to flakey internet connections. We then, in a second 
 software. This step can take some time but is done fully automatic. Once build, we exit the 
 container again:
 
-	\# su -l easybuild
+	# su -l easybuild
 	[easybuild]$ eb --fetch R-4.0.0-foss-2020a.eb
 	[easybuild]$ eb  R-4.0.0-foss-2020a.eb
 	[easybuild]$ exit
-	\# exit
+	# exit
 
 Finally, we build the Singularity container:
 
