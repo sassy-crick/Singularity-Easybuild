@@ -1,7 +1,7 @@
 # Singularity-Easybuild
 Description:
 -----------
-Collection of Singularity build files and scripts to create them for popular Linux Distributions
+Collection of Singularity definition files and scripts to create them for popular Linux Distributions
 
 The definitions folder contains the successful Singularity Definition files, tested with version 3.5.3, wheras the scripts folder contains the scripts to create the Singularity definition files which are based on EasyBuild.
 
@@ -39,6 +39,13 @@ Equally, if you want to install software on top of the existing container manual
 	$ sudo singularity build --sandbox GCC-9.3.0-envmod-debian10.sif Singularity.GCC-9.3.0-envmod-debian10
 
 See the example below for a complete build of R-4.0.0 in two steps: We first build the toolchain container (foss-2020a) and inside the container we build R-4.0.0. This approach allows us to create our own complete environment for building complete pipelines as well. 
+
+If you want to have your name and email address included in the Singularity definition file, just create this file:
+
+	/home/sassy/.singularity/sing-eb.conf
+
+An empty file will mean these values are not included in the Singularity definition file. 
+
 
 Example build:
 -------------
@@ -111,5 +118,5 @@ Singularity: https://sylabs.io/guides/3.5/admin-guide/installation.html
 Vagrant: https://www.vagrantup.com/intro/getting-started  
 Easybuild: https://easybuild.readthedocs.io/en/latest  
 
-Updated: 18.6.2020
+Updated: 23.6.2020
 
