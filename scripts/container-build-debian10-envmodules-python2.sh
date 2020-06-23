@@ -4,7 +4,23 @@
 # EasyBuild build file.
 # We are using Python3 here instead of the no longer supported Python2
 
+# As the Singularity definition file contains the author and email address.
+# both of which are optional, we check if the config file exists. 
+# We make use of the .singularity directory and look for the config file
+# sing-eb.conf there
 
+if [ -f ~/.singularity/sing-eb.conf ]; then
+        . ~/.singularity/sing-eb.conf
+else
+    echo "The Singularity definition file ~/.singularity/sing-eb.conf does not exist."
+    echo "Please use this file to set the author and email address which is used in the Singularity definition file."
+    echo "The use of this is optional."
+    echo "The syntax is:"
+    echo 'author="YOUR NAME"'
+    echo 'email="EMAIL ADDRESS"'
+    author=''
+    email=''
+fi
 
 # We need to know the name of the Easybuild build file:
 if [ ! -z "$1" ]; then
@@ -172,6 +188,8 @@ module_name="$mod1/$mod2"
 echo "module load $module_name " >> "$filename" 
 echo " " >> "$filename" 
 echo "%labels" >> "$filename" 
-echo "Author  J. Sassmannshausen <rosalind-support@kcl.ac.uk>" >> "$filename"
+if [ ! -z "$author" ] && [ ! -z "$email" ]; then
+        echo "Author "${author}" <"${email}">" >> "$filename"
+fi
 echo "${eb_file%.eb}" >> "$filename" 
 

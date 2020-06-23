@@ -2,14 +2,15 @@
 # Script to build a Singularity build file and builds the container
 # all in one go. The only thing we need to know is the name of the 
 # EasyBuild build file.
+# We are using Python3 here instead of the no longer supported Python2
 
 # As the Singularity definition file contains the author and email address.
-# both of which are optional, we check if the config file exists. 
+# both of which are optional, we check if the config file exists.
 # We make use of the .singularity directory and look for the config file
 # sing-eb.conf there
 
 if [ -f ~/.singularity/sing-eb.conf ]; then
-	. ~/.singularity/sing-eb.conf
+        . ~/.singularity/sing-eb.conf
 else
     echo "The Singularity definition file ~/.singularity/sing-eb.conf does not exist."
     echo "Please use this file to set the author and email address which is used in the Singularity definition file."
@@ -42,29 +43,32 @@ else
 		fi
 	fi
 fi
+
 # Some definitions
-filename=Singularity."${eb_file%.eb}-envmod-debian9"
+filename=Singularity."${eb_file%.eb}-envmod-centos7"
 
 # we are creating the singularity file
 
 cat > "$filename" << 'EOF'
-Bootstrap: debootstrap
-OSVersion: stretch 
-MirrorURL: http://httpredir.debian.org/debian
+Bootstrap: yum
+OSVersion: 7
+MirrorURL: http://mirror.centos.org/centos-%{OSVERSION}/%{OSVERSION}/os/x86_64/
+Include: yum
 
 %post
-apt update 
-apt dist-upgrade -y 
-apt install -y python python-setuptools environment-modules tcl
-apt install -y python-pip
-apt install -y bzip2 gzip tar zip unzip xz-utils 
-apt install -y curl wget
-apt install -y patch make
-apt install -y file git debianutils
-apt install -y gcc 
-apt install -y libibverbs-dev 
-apt install -y libssl-dev
-apt install -y binutils libthread-queue-any-perl
+yum --assumeyes update
+yum install --quiet --assumeyes epel-release
+yum install --quiet --assumeyes python3 setuptools environment-modules 
+yum install --quiet --assumeyes python3-pip
+yum install --quiet --assumeyes bzip2 gzip tar zip unzip xz
+yum install --quiet --assumeyes curl wget
+yum install --quiet --assumeyes patch make
+yum install --quiet --assumeyes file git which
+yum install --quiet --assumeyes gcc-c++
+yum install --quiet --assumeyes perl-Data-Dumper
+yum install --quiet --assumeyes perl-Thread-Queue
+yum install --quiet --assumeyes libibverbs-dev libibverbs-devel rdma-core-devel
+yum install --quiet --assumeyes openssl-devel libssl-dev libopenssl-devel openssl
 
 # install EasyBuild using pip
 pip install -U pip
@@ -74,7 +78,7 @@ pip install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
 pip install easybuild
 
 # create 'easybuild' user (if missing)
-id easybuild || useradd -s /bin/bash -m easybuild
+id easybuild || useradd easybuild
 
 # create /app software installation prefix + /scratch sandbox directory
 if [ ! -d /app ]; then mkdir -p /app; chown easybuild:easybuild -R /app; fi
@@ -123,7 +127,7 @@ EOF
 # If there is another build file, we add it before the main one
 if [ ! -z "$eb_file2" ]; then
 cat >> "$filename" << EOF
-echo "eb  --fetch /home/easybuild/$eb_file2" >>  /home/easybuild/eb-install.sh 
+echo "eb --fetch /home/easybuild/$eb_file2" >>  /home/easybuild/eb-install.sh 
 echo "eb /home/easybuild/$eb_file2" >>  /home/easybuild/eb-install.sh 
 EOF
 fi
@@ -150,7 +154,7 @@ eval "$@"
 
 %environment
 # make sure that 'module' is defined
-. /etc/profile
+source /etc/profile
 # purge any modules that may be loaded outside container
 unset LOADEDMODULES
 unset _LMFILES_
@@ -168,7 +172,7 @@ echo "module load $module_name " >> "$filename"
 echo " " >> "$filename" 
 echo "%labels" >> "$filename" 
 if [ ! -z "$author" ] && [ ! -z "$email" ]; then
-	echo "Author "${author}" <"${email}">" >> "$filename"
+        echo "Author "${author}" <"${email}">" >> "$filename"
 fi
 echo "${eb_file%.eb}" >> "$filename" 
 
