@@ -44,7 +44,12 @@ If you want to have your name and email address included in the Singularity defi
 
 	/home/sassy/.singularity/sing-eb.conf
 
-An empty file will mean these values are not included in the Singularity definition file. 
+An empty file will mean these values are not included in the Singularity definition file. If you want to include your name and email address, simply add:
+
+	name="Your Name"
+	email="email@address"
+
+and replace "Your Name" and "email@address" accordingly.
 
 
 Example build:
