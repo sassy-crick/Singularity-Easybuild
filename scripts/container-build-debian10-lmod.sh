@@ -4,7 +4,23 @@
 # EasyBuild build file.
 # We are using Python3 here instead of the no longer supported Python2
 
+# As the Singularity definition file contains the author and email address.
+# both of which are optional, we check if the config file exists. 
+# We make use of the .singularity directory and look for the config file
+# sing-eb.conf there
 
+if [ -f ~/.singularity/sing-eb.conf ]; then
+        . ~/.singularity/sing-eb.conf
+else
+    echo "The Singularity definition file ~/.singularity/sing-eb.conf does not exist."
+    echo "Please use this file to set the author and email address which is used in the Singularity definition file."
+    echo "The use of this is optional."
+    echo "The syntax is:"
+    echo 'author="YOUR NAME"'
+    echo 'email="EMAIL ADDRESS"'
+    author=''
+    email=''
+fi
 
 # We need to know the name of the Easybuild build file:
 if [ ! -z "$1" ]; then
@@ -28,35 +44,37 @@ else
 	fi
 fi
 
+# Some definitions
+filename=Singularity."${eb_file%.eb}-Lmod-debian10"
+
 # we are creating the singularity file
 
-cat > Singularity."${eb_file%.eb}" << 'EOF'
-Bootstrap: yum
-OSVersion: 7
-MirrorURL: http://mirror.centos.org/centos-%{OSVERSION}/%{OSVERSION}/os/x86_64/
-Include: yum
+cat > "$filename" << 'EOF'
+Bootstrap: debootstrap
+OSVersion: buster
+MirrorURL: http://httpredir.debian.org/debian
 
 %post
-yum --assumeyes update
-yum install --quiet --assumeyes epel-release
-yum install --quiet --assumeyes python setuptools Lmod
-yum install --quiet --assumeyes python-pip
-yum install --quiet --assumeyes bzip2 gzip tar zip unzip xz
-yum install --quiet --assumeyes curl wget
-yum install --quiet --assumeyes patch make
-yum install --quiet --assumeyes file git which
-yum install --quiet --assumeyes gcc-c++
-yum install --quiet --assumeyes perl-Data-Dumper
-yum install --quiet --assumeyes perl-Thread-Queue
-yum install --quiet --assumeyes libibverbs-dev libibverbs-devel rdma-core-devel
-yum install --quiet --assumeyes openssl-devel libssl-dev libopenssl-devel openssl
+apt update 
+apt dist-upgrade -y 
+apt install -y python3 python3-setuptools lmod
+apt install -y python3-pip
+apt install -y bzip2 gzip tar zip unzip xz-utils 
+apt install -y curl wget
+apt install -y patch make
+apt install -y file git debianutils
+apt install -y gcc-8 
+apt install -y libibverbs-dev 
+apt install -y libssl-dev
+apt install -y binutils
+apt install -y procps
 
-# install EasyBuild using pip
-pip install -U pip
-pip install wheel
-pip install -U setuptools
-pip install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
-pip install easybuild
+# install EasyBuild using pip3
+pip3 install -U pip
+pip3 install wheel
+pip3 install -U setuptools
+pip3 install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
+pip3 install easybuild
 
 # create 'easybuild' user (if missing)
 id easybuild || useradd easybuild
@@ -85,38 +103,53 @@ EOF
 # In this case, we correct the build file and add it here
 
 if [ ! -z "$eb_file2" ]; then
-	echo "cat > /home/easybuild/$eb_file2 << EOD" >> Singularity."${eb_file%.eb}"
-	cat "$eb_file2" >>  Singularity."${eb_file%.eb}"
-	echo "EOD" >> Singularity."${eb_file%.eb}"
+	echo "cat > /home/easybuild/$eb_file2 << 'EOD'" >> "$filename"
+	cat "$eb_file2" >>  "$filename"
+	echo "EOD" >> "$filename"
 fi
 
-cat >> Singularity."${eb_file%.eb}" << 'EOF'
+cat >> "$filename" << 'EOF'
+# We set this so if we need to open the container again, we got the environment set up correctly
+cat >> /home/easybuild/.bashrc << 'EOG'
+export EASYBUILD_PREFIX=/scratch
+export EASYBUILD_TMPDIR=/scratch/tmp
+export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources
+export EASYBUILD_INSTALLPATH=/app
+export EASYBUILD_PARALLEL=4
+export MODULEPATH=/app/modules/all
+alias eb="eb --robot --download-timeout=1000"
+EOG
+
 # configure EasyBuild
 cat > /home/easybuild/eb-install.sh << 'EOD'
 #!/bin/bash  
+shopt -s expand_aliases
 export EASYBUILD_PREFIX=/scratch 
 export EASYBUILD_TMPDIR=/scratch/tmp 
 export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources 
 export EASYBUILD_INSTALLPATH=/app 
 export EASYBUILD_PARALLEL=4
+alias eb="eb --robot --download-timeout=1000"
 EOD
 EOF
 
 # If there is another build file, we add it before the main one
 if [ ! -z "$eb_file2" ]; then
-cat >> Singularity."${eb_file%.eb}" << EOF
-echo "eb /home/easybuild/$eb_file2 --robot" >>  /home/easybuild/eb-install.sh 
+cat >> "$filename" << EOF
+echo "eb --fetch /home/easybuild/$eb_file2" >>  /home/easybuild/eb-install.sh 
+echo "eb /home/easybuild/$eb_file2" >>  /home/easybuild/eb-install.sh 
 EOF
 fi
 
 # We are adding the normal build file to the Singularity script
 # We need to do it this way as we need to replace the variable
 
-cat >> Singularity."${eb_file%.eb}" << EOF
-echo "eb $eb_file --robot" >>  /home/easybuild/eb-install.sh 
+cat >> "$filename" << EOF
+echo "eb --fetch $eb_file" >>  /home/easybuild/eb-install.sh 
+echo "eb $eb_file" >>  /home/easybuild/eb-install.sh 
 EOF
 
-cat >> Singularity."${eb_file%.eb}" << 'EOF'
+cat >> "$filename" << 'EOF'
 cat >> /home/easybuild/eb-install.sh << 'EOD'
 mkdir -p /app/lmodcache 
 $LMOD_DIR/update_lmod_system_cache_files -d /app/lmodcache -t /app/lmodcache/timestamp /app/modules/all  
@@ -134,7 +167,7 @@ eval "$@"
 
 %environment
 # make sure that 'module' and 'ml' commands are defined
-source /etc/profile
+. /etc/profile
 # increase threshold time for Lmod to write cache in $HOME (which we don't want to do)
 export LMOD_SHORT_TIME=86400
 # purge any modules that may be loaded outside container
@@ -149,8 +182,11 @@ EOF
 mod1=$(echo "$eb_file" | cut -d '-' -f 1 )
 mod2=$(echo "${eb_file%.eb}" | cut -d '-' -f 2- )
 module_name="$mod1/$mod2"
-echo "module load $module_name " >> Singularity."${eb_file%.eb}" 
-echo " " >> Singularity."${eb_file%.eb}" 
-echo "%labels" >> Singularity."${eb_file%.eb}" 
-echo "${eb_file%.eb}" >> Singularity."${eb_file%.eb}" 
+echo "module load $module_name " >> "$filename" 
+echo " " >> "$filename" 
+echo "%labels" >> "$filename" 
+if [ ! -z "$author" ] && [ ! -z "$email" ]; then
+        echo "Author "${author}" <"${email}">" >> "$filename"
+fi
+echo "${eb_file%.eb}" >> "$filename" 
 
