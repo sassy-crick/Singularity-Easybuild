@@ -66,6 +66,7 @@ apt install -y gcc
 apt install -y libibverbs-dev 
 apt install -y libssl-dev
 apt install -y binutils libthread-queue-any-perl
+apt install -y man libdb-dev
 
 # install EasyBuild using pip
 pip install -U pip

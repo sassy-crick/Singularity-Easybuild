@@ -65,7 +65,8 @@ apt install -y file git debianutils
 apt install -y gcc-8 
 apt install -y libibverbs-dev 
 apt install -y libssl-dev
-apt install -y binutils
+apt install -y binutils libthread-queue-any-perl
+apt install -y man libdb-dev
 
 # install EasyBuild using pip3
 pip3 install -U pip
