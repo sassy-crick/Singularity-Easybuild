@@ -44,7 +44,7 @@ else
 fi
 
 # Some definitions
-filename=Singularity."${eb_file%.eb}-envmod-centos7"
+filename=Singularity."${eb_file%.eb}-envmod-centos7-python2"
 
 # we are creating the singularity file
 

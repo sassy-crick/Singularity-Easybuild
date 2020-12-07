@@ -43,7 +43,7 @@ else
 	fi
 fi
 # Some definitions
-filename=Singularity."${eb_file%.eb}-envmod-debian9"
+filename=Singularity."${eb_file%.eb}-envmod-debian9-python2"
 
 # we are creating the singularity file
 
