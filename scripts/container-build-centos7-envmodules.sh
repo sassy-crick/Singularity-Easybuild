@@ -71,11 +71,11 @@ yum install --quiet --assumeyes libibverbs-dev libibverbs-devel rdma-core-devel
 yum install --quiet --assumeyes openssl-devel libssl-dev libopenssl-devel openssl
 
 # install EasyBuild using pip
-pip install -U pip
-pip install wheel
-pip install -U setuptools
-pip install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
-pip install easybuild
+pip3 install -U pip
+pip3 install wheel
+pip3 install -U setuptools
+pip3 install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
+pip3 install easybuild
 
 # create 'easybuild' user (if missing)
 id easybuild || useradd easybuild
