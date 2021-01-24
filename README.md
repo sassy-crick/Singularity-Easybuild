@@ -42,7 +42,7 @@ See the example below for a complete build of R-4.0.0 in two steps: We first bui
 
 If you want to have your name and email address included in the Singularity definition file, just create this file:
 
-	/home/sassy/.singularity/sing-eb.conf
+	~/.singularity/sing-eb.conf
 
 An empty file will mean these values are not included in the Singularity definition file. If you want to include your name and email address, simply add:
 
