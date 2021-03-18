@@ -263,55 +263,25 @@ EOD
 EOF
 fi
 
-case ${distro} in
-	ubuntu|debian )
-	export src_cmd="."
-	;;
-	centos )
-	export src_cmd="source"
-	;;
-esac
-
-case ${mod} in
-	lmod )
-	export lmod_cache="export LMOD_SHORT_TIME=86400"
-	export module_clean1="module --force purge"
-	export module_clean2=""
-	;;
-	envmod )
-	export lmod_cache=""
-	export module_clean1="unset LOADEDMODULES"
-        export module_clean2="unset _LMFILES_"
-	;;
-esac
-	
 # Now we can add the script which is running EasyBuild and does some of the 
 # post installation
-envsubst '${src_cmd},${lmod_cache},${module_clean1},${module_clean2}' < "$basedir"/easybuild-run.tmpl >> ${filename}
-
-# cat "$basedir"/easybuild-run.tmpl >> ${filename}
+cat "$basedir"/easybuild-run.tmpl >> ${filename}
 
 # Some stuff for lmod:
-#if [ ${mod} == "lmod" ]; then
-#cat >> ${filename} << 'EOF'
+if [ ${mod} == "lmod" ]; then
+cat >> ${filename} << 'EOF'
 # increase threshold time for Lmod to write cache in $HOME (which we don't want to do)
-#export LMOD_SHORT_TIME=86400
-#EOF
-#fi
+export LMOD_SHORT_TIME=86400
+EOF
+fi
 
 # Some stuff for envmod
-#if [ ${mod} == "envmod" ]; then
-#cat >> ${filename} << 'EOF'
+if [ ${mod} == "envmod" ]; then
+cat >> ${filename} << 'EOF'
 # purge any modules that may be loaded outside container
-#unset LOADEDMODULES
-#unset _LMFILES_
-#EOF
-#fi
-
-# This is apparently needed for Ubuntu:
-if [ ${distro} == "ubuntu" ]; then
-	echo "# this seems to be needed to make sure the terminal is working:" >> ${filename}
-	echo "export TERM=xterm-256color" >> ${filename}
+unset LOADEDMODULES
+unset _LMFILES_
+EOF
 fi
 
 # Now we finish off the Singularity definition file:
@@ -333,7 +303,8 @@ if [ ${oper} == "build" ] && [ -e "$basedir"/container-build.sh ]; then
 	"$basedir"/container-build.sh ${filename}
 else
 	echo "The Singularity definition file ${filename} has been created."
-	echo "You can now either build a Singularity Image File, or a Sandbox on a different machine if you like."
+	echo "You can now either build a Singularity Image File, or a Sandbox"
+	echo "on a different machine if you like."
 fi
 
 # End
