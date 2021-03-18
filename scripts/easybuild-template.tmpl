@@ -1,0 +1,29 @@
+# verbose commands, exit on first error
+set -ve
+set -o noclobber
+
+# We set this so if we need to open the container again, we got the environment set up correctly
+cat >> /home/easybuild/.bashrc << 'EOG'
+export EASYBUILD_PREFIX=/scratch
+export EASYBUILD_TMPDIR=/scratch/tmp
+export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources
+export EASYBUILD_INSTALLPATH=/app
+export EASYBUILD_PARALLEL=4
+export EB_PYTHON=python3
+export MODULEPATH=/app/modules/all
+alias eb="eb --robot --download-timeout=1000${env_lang}"
+EOG
+
+# configure EasyBuild
+cat > /home/easybuild/eb-install.sh << 'EOD'
+#!/bin/bash  
+shopt -s expand_aliases
+export EASYBUILD_PREFIX=/scratch 
+export EASYBUILD_TMPDIR=/scratch/tmp 
+export EASYBUILD_SOURCEPATH=/scratch/sources:/tmp/easybuild/sources 
+export EASYBUILD_INSTALLPATH=/app 
+export EASYBUILD_PARALLEL=4
+export EB_PYTHON=python3
+alias eb="eb --robot --download-timeout=1000${env_lang}"
+EOD
+

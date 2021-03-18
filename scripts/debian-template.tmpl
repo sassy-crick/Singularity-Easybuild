@@ -1,0 +1,21 @@
+Bootstrap: debootstrap
+OSVersion: ${distro_version}
+MirrorURL: ${distro_url} 
+
+%post
+apt update 
+apt dist-upgrade -y 
+apt install -y python3 python3-setuptools ${mod} 
+apt install -y python3-pip
+apt install -y bzip2 gzip tar zip unzip xz-utils 
+apt install -y curl wget
+apt install -y patch make
+apt install -y file git debianutils
+apt install -y gcc 
+apt install -y libibverbs-dev 
+apt install -y libssl-dev
+apt install -y binutils libthread-queue-any-perl
+apt install -y procps
+apt install -y man libdb-dev
+apt clean
+

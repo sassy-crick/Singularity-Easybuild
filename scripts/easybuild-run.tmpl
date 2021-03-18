@@ -1,0 +1,19 @@
+chmod a+x /home/easybuild/eb-install.sh
+
+su -l easybuild -c /home/easybuild/eb-install.sh
+
+# cleanup, everything in /scratch is assumed to be temporary
+rm -rf /scratch/*
+
+%runscript
+eval "$@"
+
+%environment
+# make sure that 'module' and 'ml' commands are defined
+source /etc/profile
+# purge any modules that may be loaded outside container
+module --force purge
+# avoid picking up modules from outside of container
+module unuse $MODULEPATH
+# pick up modules installed in /app
+module use /app/modules/all
