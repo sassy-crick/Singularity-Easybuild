@@ -147,8 +147,8 @@ fi
 # Now we can install EasyBuild
 cat "$basedir"/easybuild-install.tmpl >> ${filename} 
 
-# Now we change the easybuild user for Debian
-if [ ${distro} == "debian" ]; then
+# Now we change the easybuild user for Debian or Ubuntu
+if [ ${distro} == "ubuntu" ] || [ ${distro} == "debian" ]; then 
 	sed -i "s/useradd/useradd -s \/bin\/bash -m/" ${filename}
 fi
 
