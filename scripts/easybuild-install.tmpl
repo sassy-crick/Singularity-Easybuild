@@ -6,7 +6,7 @@ pip3 install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
 pip3 install easybuild
 
 # create 'easybuild' user (if missing)
-id easybuild || useradd easybuild
+id easybuild || useradd -s /bin/bash -m easybuild
 
 # create /app software installation prefix + /scratch sandbox directory
 if [ ! -d /app ]; then mkdir -p /app; chown easybuild:easybuild -R /app; fi
