@@ -28,7 +28,7 @@ pip3 install easybuild
 to this line:
 
 ```
-pip3 install easybuild==4.3.3
+pip3 install easybuild==4.3.4
 ```
 
 which will install the specified version. 
@@ -39,7 +39,7 @@ As `Python2` is depreciated, the containers are using the `Python3` version for 
 
 Usage:
 -----
-Using the scripts is simple. Go into the `scripts` folder and run the installation script `install.sh` This with *either* install the scripts in your `~/bin` folder as sym-links, or create the sym-links in the folder where you are running the script from. We advice you to install the script in the `~/bin` folder so they are in your `PATH` environment. If you don't want to do this, we recommend to install the sym-links in a different folder from where you have downloaded the GitHub files from. 
+Using the scripts is simple. Go into the `scripts` folder and run the installation script `install.sh` This will *either* install the scripts in your `~/bin` folder as sym-links, or create the sym-links in the folder where you are running the script from. We advice you to install the script in the `~/bin` folder so they are in your `PATH` environment. If you don't want to do this, we recommend to install the sym-links in a different folder from where you have downloaded the GitHub files from. Please note the usage of sym-links. Thus, if you do any changes in the folder where you downloaded the GitHub repository to, these changes will be carried over. If, for example, you were to delete that folder, the installation is broken. 
 
 During the installation, you will given a number of choices regarding whether you want to *build* or *create* the definition files, which Linux distribution and version you want to use and if you want to use Lmod or the environment-module system. 
 
