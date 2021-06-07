@@ -3,7 +3,7 @@ Description:
 -----------
 Collection of Singularity definition files and scripts to create them for popular Linux Distributions
 
-The definitions folder contains the successful Singularity Definition files, tested with version 3.5.3 and 3.7.1, whereas the scripts folder contains the scripts to create the Singularity definition files which are based on EasyBuild.
+The definitions folder contains the successful Singularity Definition files, tested with version 3.5.3 and 3.7.1, whereas the scripts folder contains the scripts to create the Singularity definition files which are based on EasyBuild. This version is using EasyBuild version 4.4.0.
 
 Requirements:
 ------------
@@ -19,19 +19,19 @@ Thus, it is probably best to install the easybuild-easyconfig files like this in
 
 and search the easybuild/easyconfigs folder for the name of the EasyBuild Configuration files you want to use. You only need the name, not the content of the files.
 
-The latest version of EasyBuild will be automatically installed. If you require a specific version, simply change inside the Singularity container this line:
+The version of EasyBuild  is now fixed with this release. If you require a specific version, simply change inside the Singularity definition file this line:
 
 ```
-pip3 install easybuild
+pip3 install easybuild==4.4.0
 ```
 
 to this line:
 
 ```
-pip3 install easybuild==4.3.4
+pip3 install easybuild
 ```
 
-which will install the specified version. 
+which will install the latest EasyBuild version. 
 
 ## Depreciated versions:
 
@@ -56,8 +56,6 @@ If you want to build the container and additionally a sandbox, you could use thi
 $ container-build-debian11-envmodules.sh GCC-9.3.0.eb
 ```
 
-
-
 So in our example we would get a file called `Singularity.GCC-9.3.0-envmod-debian11`, next to the Singularity container called `GCC-9.3.0-envmod-debian11.sif`
 
 If you don't want to or cannot use the automatic build process, you can build the container like this:
@@ -78,12 +76,13 @@ If you want to have your name and email address included in the Singularity defi
 ~/.singularity/sing-eb.conf
 ```
 
-An empty file will mean these values are not included in the Singularity definition file. If you want to include your name and email address, simply add:
+An empty file will mean these values are not included in the Singularity definition file. If you want to include your name and email address, simply add it. Likewise, you can pin the version of EasyBuild you want to use, like 4.4.0 in this example:
 
 	name="Your Name"
 	email="email@address"
+	eb_version="EasyBuild-version"
 
-and replace "Your Name" and "email@address" accordingly.
+and replace "Your Name" and "email@address" and the "EasyBuild-version" you want to use accordingly.
 
 
 Example build:
@@ -171,7 +170,7 @@ For more details about what you can do with Singularity please refer to their ho
 
 Acknowledgement:
 ---------------
-This work would not be possible without EasyBuild,  I am greatful to the project and the community for their help.
+This work would not be possible without EasyBuild,  I am greateful to the project and the community for their help.
 
 Links:
 -----
@@ -179,4 +178,4 @@ Singularity: https://sylabs.io/guides/3.5/admin-guide/installation.html
 Vagrant: https://www.vagrantup.com/intro/getting-started  
 Easybuild: https://easybuild.readthedocs.io/en/latest  
 
-Updated: 18.3.2021
+Updated: 7.6.2021

@@ -7,6 +7,10 @@
 # We define some variables first:
 os_python=3
 change="n"
+
+# Which version of EasyBuild are we installing?
+ebversion="4.4.0"
+
 # Where is the script located?
 basedir="$(dirname $(readlink -f "$0"))"
 
@@ -60,8 +64,8 @@ for i in "${ITEM[@]}"; do
 
 done
 
-# As the Singularity definition file contains the author and email address.
-# both of which are optional, we check if the config file exists. 
+# As the Singularity definition file contains information like for the author and email address,
+# both of which are optional, but also the used EasyBuild version.  We check if the config file exists. 
 # We make use of the .singularity directory and look for the config file
 # sing-eb.conf there
 
@@ -70,12 +74,26 @@ if [ -f ~/.singularity/sing-eb.conf ]; then
 else
     echo "The Singularity definition file ~/.singularity/sing-eb.conf does not exist."
     echo "Please use this file to set the author and email address which is used in the Singularity definition file."
+    echo "The file can also be used to specify the used version of EasyBuild, rather than just the latest one."
+    echo "As it is not set, we define it here as version 4.4.0, the latest for this release."
     echo "The use of this is optional."
     echo "The syntax is:"
     echo 'author="YOUR NAME"'
     echo 'email="EMAIL ADDRESS"'
+    echo 'eb_version="4.4.0"'
     author=''
     email=''
+    export eb_version=${ebversion}
+fi
+
+# We need to double check if the version was set correctly. 
+
+if [ -z ${eb_version} ]; then
+	echo
+	echo "The version of EasyBuld was not set in your ~/.singularity/sing-eb.conf file."
+	echo "Thus, we set it to the latest version which is ${ebversion}"
+	echo
+	export eb_version=${ebversion}
 fi
 
 # We need to know the name of the Easybuild build file:
@@ -145,7 +163,7 @@ dnf config-manager --set-enabled powertools " ${filename}
 fi
 
 # Now we can install EasyBuild
-cat "$basedir"/easybuild-install.tmpl >> ${filename} 
+envsubst '${eb_version}' < "$basedir"/easybuild-install.tmpl >> ${filename} 
 
 # Now we change the easybuild user for Debian or Ubuntu
 if [ ${distro} == "ubuntu" ] || [ ${distro} == "debian" ]; then 
@@ -326,7 +344,8 @@ echo "%labels" >> ${filename}
 if [ ! -z "${author}" ] && [ ! -z ${email} ]; then
         echo "Author ${author} <${email}>" >> ${filename}
 fi
-echo ${eb_file%.eb} >> ${filename}
+echo "EasyBuild-version ${eb_version}" >> ${filename}
+echo "EasyConfig-file ${eb_file}"  >> ${filename}
 
 if [ ${oper} == "build" ] && [ -e "$basedir"/container-build.sh ]; then
 	echo "We are now building the container. Buckle up."
