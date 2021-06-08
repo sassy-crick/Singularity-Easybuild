@@ -108,15 +108,26 @@ fi
 if [ ! -z "$2" ]; then
    eb_file2="$2"
 else
-   read -p 'Do we need a second Easybuild recipe (y/N)?: ' var
-        if [ "$var" == "y" ]; then
-        read -p 'Easybuild recipe: ' eb_file2
+   read -p 'Do we need a second Easybuild recipe (y/N)?: ' eb_file2 
+fi
+
+# We check if we provided y/n. If explicit no in the line, we unset the variable eb_file2.
+# At this stage, the variable should contain something. 
+# If it happens to be empty, we catch that further down
+case ${eb_file2} in
+	y|yes|Y|Yes )
+		read -p 'Easybuild recipe: ' eb_file2
                 if [ ! -f "$eb_file2" ]; then
                 echo "The file does not exist! Please place the correct build file in the current directory!"
                 exit 2
                 fi
-        fi
-fi
+		;;
+	n|no|N|No )
+		eb_file2=""
+		echo "No second Easybuild recipe was provided" 
+		;;
+esac
+
 # Some definitions
 filename=Singularity."${eb_file%.eb}-${distro}-${distro_version}-${mod}"
 
@@ -353,6 +364,7 @@ if [ ${oper} == "build" ] && [ -e "$basedir"/container-build.sh ]; then
 else
 	echo "The Singularity definition file ${filename} has been created."
 	echo "You can now either build a Singularity Image File, or a Sandbox on a different machine if you like."
+	echo "You can use the script $basedir/container-buils.sh for that if you want to."
 fi
 
 # End

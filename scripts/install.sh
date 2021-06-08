@@ -41,7 +41,7 @@ case ${distro} in
 	Debian|debian|d )
 	distro="debian"
 	if [ ! -z "$3" ]; then
-        	distro="$3"
+        	distro_version="$3"
   		else
 	  	read -p 'Which version do you want to use? (Stretch, Buster, Bullseye)? ' distro_version
 	fi
@@ -64,7 +64,7 @@ case ${distro} in
 	Ubuntu|ubuntu|u )
 	distro="ubuntu"
 	if [ ! -z "$3" ]; then
-        	distro="$3"
+        	distro_version="$3"
   		else
 	  	read -p 'Which version do you want to use? (Focal)? ' distro_version
 	fi
@@ -81,7 +81,7 @@ case ${distro} in
 	CentOS|Centos|centos|c )
 	distro="centos"
 	if [ ! -z "$3" ]; then
-        	distro="$3"
+        	distro_version="$3"
   		else
 	  	read -p 'Which version do you want to use? (7, 8)? ' distro_version
 	fi
@@ -126,7 +126,12 @@ case ${mod} in
 	exit 1
 esac
 
-read -p 'Do you want the symbolic links to be installed in your ~/bin directory (y/n)? ' bin_dir
+# Do we want to install that in the user's bin dir or not?
+if [ ! -z "$5" ]; then
+	bin_dir="$5"
+  else
+	read -p 'Do you want the symbolic links to be installed in your ~/bin directory (y/n)? ' bin_dir
+fi
 
 case ${bin_dir} in
 	Y|y )
