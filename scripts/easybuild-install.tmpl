@@ -1,0 +1,15 @@
+# install EasyBuild using pip3
+pip3 install -U pip
+pip3 install wheel
+pip3 install -U setuptools
+pip3 install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
+pip3 install easybuild==${eb_version}
+
+# create 'easybuild' user (if missing)
+id easybuild || useradd easybuild
+
+# create /app software installation prefix + /scratch sandbox directory
+if [ ! -d /app ]; then mkdir -p /app; chown easybuild:easybuild -R /app; fi
+if [ ! -d /scratch ]; then mkdir -p /scratch; chown easybuild:easybuild -R /scratch; fi
+if [ ! -d /home/easybuild ]; then mkdir -p /home/easybuild; chown easybuild:easybuild -R /home/easybuild;fi
+
