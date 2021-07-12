@@ -9,7 +9,7 @@ os_python=3
 change="n"
 
 # Which version of EasyBuild are we installing?
-ebversion="4.4.0"
+ebversion="4.4.1"
 
 # Where is the script located?
 basedir="$(dirname $(readlink -f "$0"))"
@@ -80,7 +80,7 @@ else
     echo "The syntax is:"
     echo 'author="YOUR NAME"'
     echo 'email="EMAIL ADDRESS"'
-    echo 'eb_version="4.4.0"'
+    echo 'eb_version="4.4.1"'
     author=''
     email=''
     export eb_version=${ebversion}
@@ -159,7 +159,7 @@ if [ ${distro} == "centos" ]; then
 	export distro_url="http://mirror.centos.org/centos-%{OSVERSION}/%{OSVERSION}/BaseOS/x86_64/os"
 	envsubst '${mod},${distro_url},${distro_version}' < "$basedir"/centos-template.tmpl > ${filename} 
 sed -i "/epel-release/a \
-# This is needed to to the change to CentOS8 \n\
+# This is needed for the change to CentOS8 \n\
 yum install --quiet --assumeyes dnf-plugins-core \n\
 dnf config-manager --set-enabled powertools " ${filename}
         fi

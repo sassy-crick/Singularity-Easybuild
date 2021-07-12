@@ -3,7 +3,7 @@ Description:
 -----------
 Collection of Singularity definition files and scripts to create them for popular Linux Distributions
 
-The definitions folder contains the successful Singularity Definition files, tested with version 3.5.3 and 3.7.1, whereas the scripts folder contains the scripts to create the Singularity definition files which are based on EasyBuild. This version is using EasyBuild version 4.4.0.
+The definitions folder contains the successful Singularity Definition files, tested with version 3.5.3 and 3.7.1, whereas the scripts folder contains the scripts to create the Singularity definition files which are based on EasyBuild. This version is using EasyBuild version 4.4.1.
 
 Requirements:
 ------------
