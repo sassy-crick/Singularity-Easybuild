@@ -30,11 +30,11 @@ esac
 
 
 # Which distribution do we want to use?
-# Debian, Ubuntu or CentOS
+# Debian, Ubuntu, CentOS or Rocky
 if [ ! -z "$2" ]; then
         distro="$2"
   else
-	  read -p 'Which Distribution do you want to use? (Debian, Ubuntu, CentOS)? ' distro
+	  read -p 'Which Distribution do you want to use? (Debian, Ubuntu, CentOS, Rocky)? ' distro
 fi
 # Check we got it right:
 case ${distro} in
@@ -98,12 +98,28 @@ case ${distro} in
 			exit 1
 	esac
 	;;
+	Rocky|rocky|r )
+	distro="rocky"
+	if [ ! -z "$3" ]; then
+        	distro_version="$3"
+  		else
+	  	read -p 'Which version do you want to use? (8)? ' distro_version
+	fi
+	case ${distro_version} in
+		8 )
+			distro_version="8"
+			;;
+		*)
+			echo "Sorry, your input was not recognised."
+			echo "I am stopping here now."
+			exit 1
+	esac
+	;;
 	* )
 	echo "Sorry, your input was not recognised."
 	echo "I am stopping here now."
 	exit 1
 esac
-
 
 # Do we want to create definition file and build the container in one go, 
 # or just create the definition file?
@@ -141,6 +157,4 @@ case ${bin_dir} in
 	ln -s "$BASEDIR"/singularity-definition.sh container-$oper-$distro$distro_version-$mod.sh 
 	;;
 esac
-
-
 

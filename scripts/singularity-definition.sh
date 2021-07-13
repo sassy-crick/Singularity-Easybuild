@@ -18,7 +18,7 @@ IFS='-' read -ra ITEM <<<"${0%.sh}"
 for i in "${ITEM[@]}"; do
      case ${i} in
 	     ubuntu20.04 )
-	     distro=ubuntu
+	     distro="ubuntu"
 	     export distro_version="focal"
 	     ;;
 	     debian11 )
@@ -40,6 +40,10 @@ for i in "${ITEM[@]}"; do
 	     centos7 )
 	     distro="centos"
 	     export distro_version="7"
+	     ;;
+	     rocky8 )
+	     distro="rocky"
+	     export distro_version="8"
 	     ;;
 
 	     envmodules )
@@ -172,6 +176,27 @@ dnf config-manager --set-enabled powertools " ${filename}
 	if [ ${mod} == "Lmod" ]; then export mod="lmod"; fi
 fi
 
+# This is for Rocky. The current version 8 is based on CentOS8, so we use most of that again
+if [ ${distro} == "rocky" ]; then 
+	if [ ${mod} == "envmod" ]; then export mod="environment-modules"; fi
+	if [ ${mod} == "lmod" ]; then export mod="Lmod"; fi
+	# As we are using Rocky, which is based on CentOS8, we need to heed this too:
+	# There are some differences in the way CentOS7 is doing things from CentOS8
+	# As we are using one template file, we do the changes here
+	if [ ${distro_version} == "8" ]; then
+	export distro_url="https://dl.rockylinux.org/pub/rocky/%{OSVERSION}/BaseOS/x86_64/os/"
+#	export distro_url="http://mirror.centos.org/centos-%{OSVERSION}/%{OSVERSION}/BaseOS/x86_64/os"
+	envsubst '${mod},${distro_url},${distro_version}' < "$basedir"/centos-template.tmpl > ${filename} 
+sed -i "/epel-release/a \
+# This is needed for the change to CentOS8 which we need in Rocky8 too\n\
+yum install --quiet --assumeyes dnf-plugins-core \n\
+dnf config-manager --set-enabled powertools " ${filename}
+        fi
+	# we need to reset the names for the modules 
+	if [ ${mod} == "environment-modules" ]; then export mod="envmod"; fi
+	if [ ${mod} == "Lmod" ]; then export mod="lmod"; fi
+fi
+
 # Now we can install EasyBuild
 envsubst '${eb_version}' < "$basedir"/easybuild-install.tmpl >> ${filename} 
 
@@ -211,9 +236,13 @@ EOD
 EOF
 fi
 
+<<<<<<< HEAD
 # This is for environment modules < 4.1.x
 # This is new for EasyBuild 4.4.2
 # See https://github.com/easybuilders/easybuild-framework/pull/3816
+=======
+# This environment modules
+>>>>>>> Rocky added to scripts, some minor tidy up/removal of commented out lines
 if [ ${mod} == "envmod" ]; then 
 cat >> ${filename} << EOF
 cat >> /root/eb-envmod.path << 'EOD'
@@ -242,10 +271,19 @@ EOF
 	export env_lang=" --modules-tool=EnvironmentModulesC --module-syntax=Tcl"
 	;;
 	8 )
+<<<<<<< HEAD
 	# Centos 8 seems to use Python-3.6.x
 	export env_lang=" --modules-tool=EnvironmentModules --module-syntax=Tcl --allow-modules-tool-mismatch"
 	;;
     esac
+=======
+	# Centos8 and Rocky8 seem to use Python-3.6.x
+	echo "patch -d /usr/local/lib/python3.6/site-packages/easybuild/tools/  -p0 < /root/eb-envmod.path" >> ${filename}
+	export env_lang=" --modules-tool=EnvironmentModules --module-syntax=Tcl --allow-modules-tool-mismatch"
+	;;
+    esac
+
+>>>>>>> Rocky added to scripts, some minor tidy up/removal of commented out lines
 fi
 
 # Now we can read in the generic EasyBuild block
@@ -285,7 +323,7 @@ case ${distro} in
 	ubuntu|debian )
 	export src_cmd="."
 	;;
-	centos )
+	centos|rocky )
 	export src_cmd="source"
 	;;
 esac
@@ -306,25 +344,6 @@ esac
 # Now we can add the script which is running EasyBuild and does some of the 
 # post installation
 envsubst '${src_cmd},${lmod_cache},${module_clean1},${module_clean2}' < "$basedir"/easybuild-run.tmpl >> ${filename}
-
-# cat "$basedir"/easybuild-run.tmpl >> ${filename}
-
-# Some stuff for lmod:
-#if [ ${mod} == "lmod" ]; then
-#cat >> ${filename} << 'EOF'
-# increase threshold time for Lmod to write cache in $HOME (which we don't want to do)
-#export LMOD_SHORT_TIME=86400
-#EOF
-#fi
-
-# Some stuff for envmod
-#if [ ${mod} == "envmod" ]; then
-#cat >> ${filename} << 'EOF'
-# purge any modules that may be loaded outside container
-#unset LOADEDMODULES
-#unset _LMFILES_
-#EOF
-#fi
 
 # This is apparently needed for Ubuntu:
 if [ ${distro} == "ubuntu" ]; then
