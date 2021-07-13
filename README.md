@@ -10,6 +10,8 @@ Requirements:
 You will need to have a Linux environment and Singularity installed in it. 
 If you don't have Linux, please use Vagrant to set up a virtual Linux environment.
 
+The minimum requirement for `bash` is version 4.x. If you are on MacOS, please use `homebrew` to install `bash` from there. 
+
 Furthermore, if you want to build the containers, you either need to have `fakeroot` installed and configured so it can be used as normal user, or have `sudo` installed. The latter is required if you want to open up containers and re-build them again. 
 
 As the software inside the containers is built using Easybuild, you will need to know the names of the Easybuild Configuration files, e.g. GCC-9.3.0.eb.
@@ -22,7 +24,11 @@ and search the easybuild/easyconfigs folder for the name of the EasyBuild Config
 The version of EasyBuild  is now fixed with this release. If you require a specific version, simply change inside the Singularity definition file this line:
 
 ```
+<<<<<<< HEAD
 pip3 install easybuild==4.4.2
+=======
+pip3 install easybuild==4.4.1
+>>>>>>> README file updated for bash-version, important for MacOS
 ```
 
 to this line:
