@@ -135,7 +135,7 @@ fi
 
 case ${bin_dir} in
 	Y|y )
-	ln -s $PWD/singularity-definition.sh ~/bin/container-$oper-$distro$distro_version-$mod.sh 
+	ln -s $BASEDIR/singularity-definition.sh ~/bin/container-$oper-$distro$distro_version-$mod.sh 
 	;;
 	N|n )
 	ln -s "$BASEDIR"/singularity-definition.sh container-$oper-$distro$distro_version-$mod.sh 
