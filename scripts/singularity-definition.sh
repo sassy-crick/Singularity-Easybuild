@@ -236,14 +236,11 @@ EOD
 EOF
 fi
 
-<<<<<<< HEAD
 # This is for environment modules < 4.1.x
 # This is new for EasyBuild 4.4.2
 # See https://github.com/easybuilders/easybuild-framework/pull/3816
-=======
-# This environment modules
->>>>>>> Rocky added to scripts, some minor tidy up/removal of commented out lines
-if [ ${mod} == "envmod" ]; then 
+if [ ${mod} == "envmod" ]; then
+       if [ ${distro_version} == "stretch" ] ; then 
 cat >> ${filename} << EOF
 cat >> /root/eb-envmod.path << 'EOD'
 --- modules.py.orig      2020-06-09 14:06:45.709906123 +0100
@@ -259,6 +256,7 @@ cat >> /root/eb-envmod.path << 'EOD'
      VERSION_REGEXP = r'^Modules\s+Release\s+(?P<version>\d\S*)\s'
 EOD
 EOF
+       fi
 
     case ${distro_version} in
 	stretch )
@@ -271,19 +269,10 @@ EOF
 	export env_lang=" --modules-tool=EnvironmentModulesC --module-syntax=Tcl"
 	;;
 	8 )
-<<<<<<< HEAD
-	# Centos 8 seems to use Python-3.6.x
-	export env_lang=" --modules-tool=EnvironmentModules --module-syntax=Tcl --allow-modules-tool-mismatch"
-	;;
-    esac
-=======
 	# Centos8 and Rocky8 seem to use Python-3.6.x
-	echo "patch -d /usr/local/lib/python3.6/site-packages/easybuild/tools/  -p0 < /root/eb-envmod.path" >> ${filename}
 	export env_lang=" --modules-tool=EnvironmentModules --module-syntax=Tcl --allow-modules-tool-mismatch"
 	;;
     esac
-
->>>>>>> Rocky added to scripts, some minor tidy up/removal of commented out lines
 fi
 
 # Now we can read in the generic EasyBuild block
