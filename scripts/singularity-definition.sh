@@ -59,7 +59,6 @@ for i in "${ITEM[@]}"; do
 	     python2 )
 	     os_python=2
 	     ;;
-
      esac
 
 done
@@ -212,9 +211,10 @@ EOD
 EOF
 fi
 
-# This is for Buster and environment modules
+# This is for environment modules < 4.1.x
+# This is new for EasyBuild 4.4.2
+# See https://github.com/easybuilders/easybuild-framework/pull/3816
 if [ ${mod} == "envmod" ]; then 
-#    if [ ${distro} == "ubuntu" ] || [ ${distro} == "debian" ]; then
 cat >> ${filename} << EOF
 cat >> /root/eb-envmod.path << 'EOD'
 --- modules.py.orig      2020-06-09 14:06:45.709906123 +0100
@@ -232,31 +232,20 @@ EOD
 EOF
 
     case ${distro_version} in
-	focal )
-	echo "patch -d /usr/local/lib/python3.8/dist-packages/easybuild/tools -p0 < /root/eb-envmod.path" >> ${filename}
-	;;
-	bullseye )
-	echo "patch -d /usr/local/lib/python3.9/dist-packages/easybuild/tools -p0 < /root/eb-envmod.path" >> ${filename}
-	;;
-	buster )
-	echo "patch -d /usr/local/lib/python3.7/dist-packages/easybuild/tools -p0 < /root/eb-envmod.path" >> ${filename}
-	;;
 	stretch )
 	echo "patch -d /usr/local/lib/python3.5/dist-packages/easybuild/tools -p0 < /root/eb-envmod.path" >> ${filename}
 	# Debian stretch is using environment module 3, so we need to do this:
 	export env_lang=" --modules-tool=EnvironmentModulesC --module-syntax=Tcl"
 	;;
+	# This is for CentOS
 	7 )
 	export env_lang=" --modules-tool=EnvironmentModulesC --module-syntax=Tcl"
 	;;
 	8 )
 	# Centos 8 seems to use Python-3.6.x
-	echo "patch -d /usr/local/lib/python3.6/site-packages/easybuild/tools/  -p0 < /root/eb-envmod.path" >> ${filename}
 	export env_lang=" --modules-tool=EnvironmentModules --module-syntax=Tcl --allow-modules-tool-mismatch"
 	;;
     esac
-#    fi
-
 fi
 
 # Now we can read in the generic EasyBuild block
