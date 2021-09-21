@@ -1,9 +1,9 @@
 # install EasyBuild using pip3
-pip3 install -U pip
-pip3 install wheel
-pip3 install -U setuptools
-pip3 install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
-pip3 install easybuild==${eb_version}
+python3 -m pip install -U pip
+python3 -m pip install wheel
+python3 -m pip install -U setuptools
+python3 -m pip install 'vsc-install<0.11.4' 'vsc-base<2.9.0'
+python3 -m pip install easybuild==${eb_version}
 
 # create 'easybuild' user (if missing)
 id easybuild || useradd easybuild
