@@ -3,7 +3,7 @@ Description:
 -----------
 Collection of Singularity definition files and scripts to create them for popular Linux Distributions
 
-The definitions folder contains the successful Singularity Definition files, tested with version 3.5.3 and 3.7.1, whereas the scripts folder contains the scripts to create the Singularity definition files which are based on EasyBuild. This version is using EasyBuild version 4.4.1.
+The definitions folder contains the successful Singularity Definition files, tested with version 3.5.3 and 3.7.1, whereas the scripts folder contains the scripts to create the Singularity definition files which are based on EasyBuild. This version is using EasyBuild version 4.4.2.
 
 Requirements:
 ------------
@@ -22,7 +22,7 @@ and search the easybuild/easyconfigs folder for the name of the EasyBuild Config
 The version of EasyBuild  is now fixed with this release. If you require a specific version, simply change inside the Singularity definition file this line:
 
 ```
-pip3 install easybuild==4.4.0
+pip3 install easybuild==4.4.2
 ```
 
 to this line:
