@@ -361,7 +361,7 @@ if [ ${oper} == "build" ] && [ -e "$basedir"/container-build.sh ]; then
 else
 	echo "The Singularity definition file ${filename} has been created."
 	echo "You can now either build a Singularity Image File, or a Sandbox on a different machine if you like."
-	echo "You can use the script $basedir/container-buils.sh for that if you want to."
+	echo "You can use the script ${basedir}/container-build.sh for that if you want to."
 fi
 
 # End
