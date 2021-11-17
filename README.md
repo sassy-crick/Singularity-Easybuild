@@ -1,14 +1,18 @@
 # Singularity-Easybuild
 Description:
 -----------
-Collection of Singularity definition files and scripts to create them for popular Linux Distributions
+Collection of Singularity definition files and scripts to create them for popular Linux Distributions like Debian, Centos and new: Rocky!
 
-The definitions folder contains the successful Singularity Definition files, tested with version 3.5.3 and 3.7.1, whereas the scripts folder contains the scripts to create the Singularity definition files which are based on EasyBuild. This version is using EasyBuild version 4.4.2.
+The definitions folder contains the successful Singularity Definition files, tested with version 3.5.3 and 3.7.1, whereas the scripts folder contains the scripts to create the Singularity definition files which are based on EasyBuild. This version is using EasyBuild version 4.5.0.
 
 Requirements:
 ------------
 You will need to have a Linux environment and Singularity installed in it. 
 If you don't have Linux, please use Vagrant to set up a virtual Linux environment.
+
+Please note: we noticed that Singularity version 3.8.x seems to have problems with the container internal `lmod` but it is working fine for the internal `envmod`. We are working on the issue so if you want to use `lmod` inside the container, for now we recommend to use Singularity version 3.7.x. 
+
+The minimum requirement for `bash` is version 4.x. If you are on MacOS, please use `homebrew` to install `bash` from there. 
 
 Furthermore, if you want to build the containers, you either need to have `fakeroot` installed and configured so it can be used as normal user, or have `sudo` installed. The latter is required if you want to open up containers and re-build them again. 
 
@@ -22,7 +26,7 @@ and search the easybuild/easyconfigs folder for the name of the EasyBuild Config
 The version of EasyBuild  is now fixed with this release. If you require a specific version, simply change inside the Singularity definition file this line:
 
 ```
-pip3 install easybuild==4.4.2
+pip3 install easybuild==4.5.0
 ```
 
 to this line:
@@ -174,8 +178,8 @@ This work would not be possible without EasyBuild,  I am greateful to the projec
 
 Links:
 -----
-Singularity: https://sylabs.io/guides/3.5/admin-guide/installation.html  
+Singularity: https://sylabs.io/guides/3.7/admin-guide/installation.html  
 Vagrant: https://www.vagrantup.com/intro/getting-started  
 Easybuild: https://easybuild.readthedocs.io/en/latest  
 
-Updated: 7.6.2021
+Updated: 17.11.2021

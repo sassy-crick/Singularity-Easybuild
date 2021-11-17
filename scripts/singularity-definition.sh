@@ -9,7 +9,7 @@ os_python=3
 change="n"
 
 # Which version of EasyBuild are we installing?
-ebversion="4.4.2"
+ebversion="4.5.0"
 
 # Where is the script located?
 basedir="$(dirname $(readlink -f "$0"))"
@@ -18,7 +18,7 @@ IFS='-' read -ra ITEM <<<"${0%.sh}"
 for i in "${ITEM[@]}"; do
      case ${i} in
 	     ubuntu20.04 )
-	     distro=ubuntu
+	     distro="ubuntu"
 	     export distro_version="focal"
 	     ;;
 	     debian11 )
@@ -40,6 +40,10 @@ for i in "${ITEM[@]}"; do
 	     centos7 )
 	     distro="centos"
 	     export distro_version="7"
+	     ;;
+	     rocky8 )
+	     distro="rocky"
+	     export distro_version="8"
 	     ;;
 
 	     envmodules )
@@ -172,6 +176,26 @@ dnf config-manager --set-enabled powertools " ${filename}
 	if [ ${mod} == "Lmod" ]; then export mod="lmod"; fi
 fi
 
+# This is for Rocky. The current version 8 is based on CentOS8, so we use most of that again
+if [ ${distro} == "rocky" ]; then 
+	if [ ${mod} == "envmod" ]; then export mod="environment-modules"; fi
+	if [ ${mod} == "lmod" ]; then export mod="Lmod"; fi
+	# As we are using Rocky, which is based on CentOS8, we need to heed this too:
+	# There are some differences in the way CentOS7 is doing things from CentOS8
+	# As we are using one template file, we do the changes here
+	if [ ${distro_version} == "8" ]; then
+	export distro_url="https://dl.rockylinux.org/pub/rocky/%{OSVERSION}/BaseOS/x86_64/os/"
+	envsubst '${mod},${distro_url},${distro_version}' < "$basedir"/centos-template.tmpl > ${filename} 
+sed -i "/epel-release/a \
+# This is needed for the change to CentOS8 which we need in Rocky8 too\n\
+yum install --quiet --assumeyes dnf-plugins-core \n\
+dnf config-manager --set-enabled powertools " ${filename}
+        fi
+	# we need to reset the names for the modules 
+	if [ ${mod} == "environment-modules" ]; then export mod="envmod"; fi
+	if [ ${mod} == "Lmod" ]; then export mod="lmod"; fi
+fi
+
 # Now we can install EasyBuild
 envsubst '${eb_version}' < "$basedir"/easybuild-install.tmpl >> ${filename} 
 
@@ -214,7 +238,8 @@ fi
 # This is for environment modules < 4.1.x
 # This is new for EasyBuild 4.4.2
 # See https://github.com/easybuilders/easybuild-framework/pull/3816
-if [ ${mod} == "envmod" ]; then 
+if [ ${mod} == "envmod" ]; then
+       if [ ${distro_version} == "stretch" ] ; then 
 cat >> ${filename} << EOF
 cat >> /root/eb-envmod.path << 'EOD'
 --- modules.py.orig      2020-06-09 14:06:45.709906123 +0100
@@ -230,6 +255,7 @@ cat >> /root/eb-envmod.path << 'EOD'
      VERSION_REGEXP = r'^Modules\s+Release\s+(?P<version>\d\S*)\s'
 EOD
 EOF
+       fi
 
     case ${distro_version} in
 	stretch )
@@ -242,7 +268,7 @@ EOF
 	export env_lang=" --modules-tool=EnvironmentModulesC --module-syntax=Tcl"
 	;;
 	8 )
-	# Centos 8 seems to use Python-3.6.x
+	# Centos8 and Rocky8 seem to use Python-3.6.x
 	export env_lang=" --modules-tool=EnvironmentModules --module-syntax=Tcl --allow-modules-tool-mismatch"
 	;;
     esac
@@ -285,7 +311,7 @@ case ${distro} in
 	ubuntu|debian )
 	export src_cmd="."
 	;;
-	centos )
+	centos|rocky )
 	export src_cmd="source"
 	;;
 esac
@@ -306,25 +332,6 @@ esac
 # Now we can add the script which is running EasyBuild and does some of the 
 # post installation
 envsubst '${src_cmd},${lmod_cache},${module_clean1},${module_clean2}' < "$basedir"/easybuild-run.tmpl >> ${filename}
-
-# cat "$basedir"/easybuild-run.tmpl >> ${filename}
-
-# Some stuff for lmod:
-#if [ ${mod} == "lmod" ]; then
-#cat >> ${filename} << 'EOF'
-# increase threshold time for Lmod to write cache in $HOME (which we don't want to do)
-#export LMOD_SHORT_TIME=86400
-#EOF
-#fi
-
-# Some stuff for envmod
-#if [ ${mod} == "envmod" ]; then
-#cat >> ${filename} << 'EOF'
-# purge any modules that may be loaded outside container
-#unset LOADEDMODULES
-#unset _LMFILES_
-#EOF
-#fi
 
 # This is apparently needed for Ubuntu:
 if [ ${distro} == "ubuntu" ]; then
@@ -353,7 +360,7 @@ if [ ${oper} == "build" ] && [ -e "$basedir"/container-build.sh ]; then
 else
 	echo "The Singularity definition file ${filename} has been created."
 	echo "You can now either build a Singularity Image File, or a Sandbox on a different machine if you like."
-	echo "You can use the script $basedir/container-buils.sh for that if you want to."
+	echo "You can use the script ${basedir}/container-build.sh for that if you want to."
 fi
 
 # End
