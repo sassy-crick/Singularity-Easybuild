@@ -155,7 +155,10 @@ fi
 # This is for CentOS. Here we need to change the names of the environment modules a bit
 if [ ${distro} == "centos" ]; then 
 	if [ ${mod} == "envmod" ]; then export mod="environment-modules"; fi
-	if [ ${mod} == "lmod" ]; then export mod="Lmod"; fi
+	if [ ${mod} == "lmod" ]; then 
+		export src_path="/usr/share/lmod/lmod/init/profile"
+		export mod="Lmod"
+	fi
 	# There are some differences in the way CentOS7 is doing things from CentOS8
 	# As we are using one template file, we do the changes here
 	if [ ${distro_version} == "8" ]; then
@@ -179,7 +182,10 @@ fi
 # This is for Rocky. The current version 8 is based on CentOS8, so we use most of that again
 if [ ${distro} == "rocky" ]; then 
 	if [ ${mod} == "envmod" ]; then export mod="environment-modules"; fi
-	if [ ${mod} == "lmod" ]; then export mod="Lmod"; fi
+	if [ ${mod} == "lmod" ]; then 
+		export mod="Lmod"
+		export src_path="/usr/share/lmod/lmod/init/profile"
+		fi
 	# As we are using Rocky, which is based on CentOS8, we need to heed this too:
 	# There are some differences in the way CentOS7 is doing things from CentOS8
 	# As we are using one template file, we do the changes here
@@ -310,9 +316,11 @@ fi
 case ${distro} in
 	ubuntu|debian )
 	export src_cmd="."
+	export src_path="/etc/profile"
 	;;
 	centos|rocky )
 	export src_cmd="source"
+	# the src_path is already set further up in the script, in the relevant CentOS/Rock section
 	;;
 esac
 
@@ -331,7 +339,7 @@ esac
 	
 # Now we can add the script which is running EasyBuild and does some of the 
 # post installation
-envsubst '${src_cmd},${lmod_cache},${module_clean1},${module_clean2}' < "$basedir"/easybuild-run.tmpl >> ${filename}
+envsubst '${src_cmd},${src_path},${lmod_cache},${module_clean1},${module_clean2}' < "$basedir"/easybuild-run.tmpl >> ${filename}
 
 # This is apparently needed for Ubuntu:
 if [ ${distro} == "ubuntu" ]; then

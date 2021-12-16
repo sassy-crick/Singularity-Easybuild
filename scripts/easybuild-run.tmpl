@@ -11,7 +11,7 @@ eval "$@"
 
 %environment
 # make sure that 'module' and 'ml' commands are defined
-${src_cmd} /etc/profile
+${src_cmd} ${src_path} 
 # increase threshold time for Lmod to write cache in $HOME (which we don't want to do)
 ${lmod_cache}
 # purge any modules that may be loaded outside container
