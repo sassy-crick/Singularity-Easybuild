@@ -9,7 +9,7 @@ os_python=3
 change="n"
 
 # Which version of EasyBuild are we installing?
-ebversion="4.5.0"
+ebversion="4.5.1"
 
 # Where is the script located?
 basedir="$(dirname $(readlink -f "$0"))"
