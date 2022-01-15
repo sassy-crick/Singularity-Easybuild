@@ -154,7 +154,10 @@ fi
 
 # This is for CentOS. Here we need to change the names of the environment modules a bit
 if [ ${distro} == "centos" ]; then 
-	if [ ${mod} == "envmod" ]; then export mod="environment-modules"; fi
+	if [ ${mod} == "envmod" ]; then 
+		export src_path="/etc/profile.d/modules.sh"
+		export mod="environment-modules" 
+	fi
 	if [ ${mod} == "lmod" ]; then 
 		export src_path="/usr/share/lmod/lmod/init/profile"
 		export mod="Lmod"
@@ -181,7 +184,10 @@ fi
 
 # This is for Rocky. The current version 8 is based on CentOS8, so we use most of that again
 if [ ${distro} == "rocky" ]; then 
-	if [ ${mod} == "envmod" ]; then export mod="environment-modules"; fi
+	if [ ${mod} == "envmod" ]; then 
+		export mod="environment-modules" 
+		export src_path="/etc/profile.d/modules.sh"
+	fi
 	if [ ${mod} == "lmod" ]; then 
 		export mod="Lmod"
 		export src_path="/usr/share/lmod/lmod/init/profile"
