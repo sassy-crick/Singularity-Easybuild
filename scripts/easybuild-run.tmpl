@@ -20,7 +20,7 @@ ${module_clean2}
 # avoid picking up modules from outside of container
 module unuse $MODULEPATH
 # pick up modules installed in /app
-module use /app/modules/all
+export MODULEPATH="/app/modules/all"
 # setting up the installation environment:
 USER=$(whoami)
 
