@@ -21,6 +21,10 @@ for i in "${ITEM[@]}"; do
 	     distro="ubuntu"
 	     export distro_version="focal"
 	     ;;
+	     debian12 )
+	     distro="debian"
+	     export distro_version="bookworm"
+	     ;;
 	     debian11 )
 	     distro="debian"
 	     export distro_version="bullseye"
@@ -31,7 +35,11 @@ for i in "${ITEM[@]}"; do
 	     ;;
 	     debian9 )
 	     distro="debian"
-	     export distro_version="stretch"
+	     # Debian Stretch is EOL, so we drop the support for it here:
+	     echo "Debian Stretch is end of life and as such no longer supported."
+	     echo "Please use one of the newer versions."
+	     echo "We are stopping here."
+	     exit 2
 	     ;;
 	     centos8 )
 	     distro="centos"
@@ -44,6 +52,18 @@ for i in "${ITEM[@]}"; do
 	     rocky8 )
 	     distro="rocky"
 	     export distro_version="8"
+	     ;;
+	     rocky8.3 )
+	     distro="rocky"
+	     export distro_version="8.3"
+	     ;;
+	     rocky8.4 )
+	     distro="rocky"
+	     export distro_version="8.4"
+	     ;;
+	     rocky8.5 )
+	     distro="rocky"
+	     export distro_version="8.5"
 	     ;;
 
 	     envmodules )
@@ -195,7 +215,7 @@ if [ ${distro} == "rocky" ]; then
 	# As we are using Rocky, which is based on CentOS8, we need to heed this too:
 	# There are some differences in the way CentOS7 is doing things from CentOS8
 	# As we are using one template file, we do the changes here
-	if [ ${distro_version} == "8" ]; then
+	if [ ${distro_version%.*} == "8" ]; then
 	export distro_url="https://dl.rockylinux.org/pub/rocky/%{OSVERSION}/BaseOS/x86_64/os/"
 	envsubst '${mod},${distro_url},${distro_version}' < "$basedir"/centos-template.tmpl > ${filename} 
 sed -i "/epel-release/a \
@@ -275,11 +295,15 @@ EOF
 	# Debian stretch is using environment module 3, so we need to do this:
 	export env_lang=" --modules-tool=EnvironmentModulesC --module-syntax=Tcl"
 	;;
+	bookworm )
+	# Debian bookworm seems to need that:
+	export env_lang=" --modules-tool=EnvironmentModules --module-syntax=Tcl --allow-modules-tool-mismatch"
+	;;
 	# This is for CentOS
 	7 )
 	export env_lang=" --modules-tool=EnvironmentModulesC --module-syntax=Tcl"
 	;;
-	8 )
+	8 | 8.3 | 8.4 | 8.5 )
 	# Centos8 and Rocky8 seem to use Python-3.6.x
 	export env_lang=" --modules-tool=EnvironmentModules --module-syntax=Tcl --allow-modules-tool-mismatch"
 	;;
