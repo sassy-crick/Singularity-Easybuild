@@ -9,7 +9,7 @@ os_python=3
 change="n"
 
 # Which version of EasyBuild are we installing?
-ebversion="4.5.1"
+ebversion="4.5.3"
 
 # Where is the script located?
 basedir="$(dirname $(readlink -f "$0"))"
@@ -52,14 +52,6 @@ for i in "${ITEM[@]}"; do
 	     rocky8 )
 	     distro="rocky"
 	     export distro_version="8"
-	     ;;
-	     rocky8.3 )
-	     distro="rocky"
-	     export distro_version="8.3"
-	     ;;
-	     rocky8.4 )
-	     distro="rocky"
-	     export distro_version="8.4"
 	     ;;
 	     rocky8.5 )
 	     distro="rocky"

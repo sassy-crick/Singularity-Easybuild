@@ -1,9 +1,9 @@
 # Singularity-Easybuild
 Description:
 -----------
-Collection of Singularity definition files and scripts to create them for popular Linux Distributions like Debian, Centos and new: Rocky!
+Collection of Singularity definition files and scripts to create them for popular Linux Distributions like Debian (Buster, Bullseye and Bookworm), Centos (7 and 8), and Rocky (8.3, 8.4 and latest). 
 
-The definitions folder contains the successful Singularity Definition files, tested with version 3.5.3 and 3.7.1, whereas the scripts folder contains the scripts to create the Singularity definition files which are based on EasyBuild. This version is using EasyBuild version 4.5.0.
+The definitions folder contains the successful Singularity Definition files, tested with version 3.5.3, 3.7.1, and CE-3.8.4 from Singularity, next to Apptainer/Singularity 3.8.5 , whereas the scripts folder contains the scripts to create the Singularity definition files which are based on EasyBuild. This version is using EasyBuild version 4.5.3.
 
 Requirements:
 ------------
@@ -21,12 +21,12 @@ Thus, it is probably best to install the easybuild-easyconfig files like this in
 
 	$ git clone https://github.com/easybuilders/easybuild-easyconfigs.git
 
-and search the easybuild/easyconfigs folder for the name of the EasyBuild Configuration files you want to use. You only need the name, not the content of the files.
+and search the easybuild/easyconfigs folder for the name of the EasyBuild Configuration files you want to use. You only need the name, not the content of the file.
 
 The version of EasyBuild  is now fixed with this release. If you require a specific version, simply change inside the Singularity definition file this line:
 
 ```
-pip3 install easybuild==4.5.0
+pip3 install easybuild==4.5.2
 ```
 
 to this line:
@@ -178,8 +178,13 @@ This work would not be possible without EasyBuild,  I am greateful to the projec
 
 Links:
 -----
-Singularity: https://sylabs.io/guides/3.7/admin-guide/installation.html  
+Singularity: https://sylabs.io/guides/3.8/admin-guide/installation.html  
+(Source: https://github.com/sylabs/singularity/releases)
+
+Apptainer: http://apptainer.org/
+(Source: https://github.com/apptainer/singularity)
+
 Vagrant: https://www.vagrantup.com/intro/getting-started  
 Easybuild: https://easybuild.readthedocs.io/en/latest  
 
-Updated: 17.11.2021
+Updated: 16.2.2022
