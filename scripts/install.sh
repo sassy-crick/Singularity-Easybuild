@@ -91,6 +91,9 @@ case ${distro} in
 			;;
 		8 )
 			distro_version="8"
+			echo "CentOS-8 is end of life. We suggest you are using Rocky instead."
+			echo "Stopping here."
+			exit 2
 			;;
 		*)
 			echo "Sorry, your input was not recognised."

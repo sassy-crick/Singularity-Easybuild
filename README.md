@@ -1,7 +1,7 @@
 # Singularity-Easybuild
 Description:
 -----------
-Collection of Singularity definition files and scripts to create them for popular Linux Distributions like Debian (Buster, Bullseye and Bookworm), Centos (7 and 8), and Rocky (8.3, 8.4 and latest). 
+Collection of Singularity definition files and scripts to create them for popular Linux Distributions like Debian (Buster, Bullseye and Bookworm), Centos (7), and Rocky (8.5 and latest). 
 
 The definitions folder contains the successful Singularity Definition files, tested with version 3.5.3, 3.7.1, and CE-3.8.4 from Singularity, next to Apptainer/Singularity 3.8.5 , whereas the scripts folder contains the scripts to create the Singularity definition files which are based on EasyBuild. This version is using EasyBuild version 4.5.3.
 
@@ -10,7 +10,7 @@ Requirements:
 You will need to have a Linux environment and Singularity installed in it. 
 If you don't have Linux, please use Vagrant to set up a virtual Linux environment.
 
-Please note: we noticed that Singularity version 3.8.x seems to have problems with the container internal `lmod` but it is working fine for the internal `envmod`. We are working on the issue so if you want to use `lmod` inside the container, for now we recommend to use Singularity version 3.7.x. 
+Please note: we noticed that Singularity version 3.8.x seems to have problems with the container internal `envmod` but it is working fine for the internal `lmod`. We are working on the issue so if you want to use `envmod` inside the container, for now we recommend to use Singularity version 3.7.x. 
 
 The minimum requirement for `bash` is version 4.x. If you are on MacOS, please use `homebrew` to install `bash` from there. 
 
@@ -40,6 +40,8 @@ which will install the latest EasyBuild version.
 ## Depreciated versions:
 
 As `Python2` is depreciated, the containers are using the `Python3` version for as their default system version. Note:  This is different from the Python versions EasyBuild will install and should not be mixed up.
+
+As CentOS-8 is now end of life we are currently no longer supporting this version. We suggest to switch to Rocky-8 instead.
 
 Usage:
 -----
@@ -187,4 +189,4 @@ Apptainer: http://apptainer.org/
 Vagrant: https://www.vagrantup.com/intro/getting-started  
 Easybuild: https://easybuild.readthedocs.io/en/latest  
 
-Updated: 16.2.2022
+Updated: 11.3.2022

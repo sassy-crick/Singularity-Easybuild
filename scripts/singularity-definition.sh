@@ -44,6 +44,10 @@ for i in "${ITEM[@]}"; do
 	     centos8 )
 	     distro="centos"
 	     export distro_version="8"
+	     echo "CentOS-8 is end of life and as such no longer supported."
+	     echo "We suggest to use the Rocky project instead."
+	     echo "We are stopping here."
+	     exit 2
 	     ;;
 	     centos7 )
 	     distro="centos"
@@ -176,6 +180,9 @@ if [ ${distro} == "centos" ]; then
 	fi
 	# There are some differences in the way CentOS7 is doing things from CentOS8
 	# As we are using one template file, we do the changes here
+	# CentOS-8 is no longer supported and all attempts to get it from the archive working failed.
+	# For now we leave it in here for reference with the aim to get it maybe working at one point
+	# together with CentOS-9. Maybe. 
 	if [ ${distro_version} == "8" ]; then
 	export distro_url="http://mirror.centos.org/centos-%{OSVERSION}/%{OSVERSION}/BaseOS/x86_64/os"
 	envsubst '${mod},${distro_url},${distro_version}' < "$basedir"/centos-template.tmpl > ${filename} 
@@ -295,7 +302,7 @@ EOF
 	7 )
 	export env_lang=" --modules-tool=EnvironmentModulesC --module-syntax=Tcl"
 	;;
-	8 | 8.3 | 8.4 | 8.5 )
+	8 | 8.5 )
 	# Centos8 and Rocky8 seem to use Python-3.6.x
 	export env_lang=" --modules-tool=EnvironmentModules --module-syntax=Tcl --allow-modules-tool-mismatch"
 	;;
