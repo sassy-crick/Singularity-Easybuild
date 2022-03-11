@@ -9,7 +9,7 @@ os_python=3
 change="n"
 
 # Which version of EasyBuild are we installing?
-ebversion="4.5.0"
+ebversion="4.5.3"
 
 # Where is the script located?
 basedir="$(dirname $(readlink -f "$0"))"
@@ -21,6 +21,10 @@ for i in "${ITEM[@]}"; do
 	     distro="ubuntu"
 	     export distro_version="focal"
 	     ;;
+	     debian12 )
+	     distro="debian"
+	     export distro_version="bookworm"
+	     ;;
 	     debian11 )
 	     distro="debian"
 	     export distro_version="bullseye"
@@ -31,11 +35,19 @@ for i in "${ITEM[@]}"; do
 	     ;;
 	     debian9 )
 	     distro="debian"
-	     export distro_version="stretch"
+	     # Debian Stretch is EOL, so we drop the support for it here:
+	     echo "Debian Stretch is end of life and as such no longer supported."
+	     echo "Please use one of the newer versions."
+	     echo "We are stopping here."
+	     exit 2
 	     ;;
 	     centos8 )
 	     distro="centos"
 	     export distro_version="8"
+	     echo "CentOS-8 is end of life and as such no longer supported."
+	     echo "We suggest to use the Rocky project instead."
+	     echo "We are stopping here."
+	     exit 2
 	     ;;
 	     centos7 )
 	     distro="centos"
@@ -44,6 +56,10 @@ for i in "${ITEM[@]}"; do
 	     rocky8 )
 	     distro="rocky"
 	     export distro_version="8"
+	     ;;
+	     rocky8.5 )
+	     distro="rocky"
+	     export distro_version="8.5"
 	     ;;
 
 	     envmodules )
@@ -154,10 +170,19 @@ fi
 
 # This is for CentOS. Here we need to change the names of the environment modules a bit
 if [ ${distro} == "centos" ]; then 
-	if [ ${mod} == "envmod" ]; then export mod="environment-modules"; fi
-	if [ ${mod} == "lmod" ]; then export mod="Lmod"; fi
+	if [ ${mod} == "envmod" ]; then 
+		export src_path="/etc/profile.d/modules.sh"
+		export mod="environment-modules" 
+	fi
+	if [ ${mod} == "lmod" ]; then 
+		export src_path="/usr/share/lmod/lmod/init/profile"
+		export mod="Lmod"
+	fi
 	# There are some differences in the way CentOS7 is doing things from CentOS8
 	# As we are using one template file, we do the changes here
+	# CentOS-8 is no longer supported and all attempts to get it from the archive working failed.
+	# For now we leave it in here for reference with the aim to get it maybe working at one point
+	# together with CentOS-9. Maybe. 
 	if [ ${distro_version} == "8" ]; then
 	export distro_url="http://mirror.centos.org/centos-%{OSVERSION}/%{OSVERSION}/BaseOS/x86_64/os"
 	envsubst '${mod},${distro_url},${distro_version}' < "$basedir"/centos-template.tmpl > ${filename} 
@@ -178,12 +203,18 @@ fi
 
 # This is for Rocky. The current version 8 is based on CentOS8, so we use most of that again
 if [ ${distro} == "rocky" ]; then 
-	if [ ${mod} == "envmod" ]; then export mod="environment-modules"; fi
-	if [ ${mod} == "lmod" ]; then export mod="Lmod"; fi
+	if [ ${mod} == "envmod" ]; then 
+		export mod="environment-modules" 
+		export src_path="/etc/profile.d/modules.sh"
+	fi
+	if [ ${mod} == "lmod" ]; then 
+		export mod="Lmod"
+		export src_path="/usr/share/lmod/lmod/init/profile"
+		fi
 	# As we are using Rocky, which is based on CentOS8, we need to heed this too:
 	# There are some differences in the way CentOS7 is doing things from CentOS8
 	# As we are using one template file, we do the changes here
-	if [ ${distro_version} == "8" ]; then
+	if [ ${distro_version%.*} == "8" ]; then
 	export distro_url="https://dl.rockylinux.org/pub/rocky/%{OSVERSION}/BaseOS/x86_64/os/"
 	envsubst '${mod},${distro_url},${distro_version}' < "$basedir"/centos-template.tmpl > ${filename} 
 sed -i "/epel-release/a \
@@ -263,11 +294,15 @@ EOF
 	# Debian stretch is using environment module 3, so we need to do this:
 	export env_lang=" --modules-tool=EnvironmentModulesC --module-syntax=Tcl"
 	;;
+	bookworm )
+	# Debian bookworm seems to need that:
+	export env_lang=" --modules-tool=EnvironmentModules --module-syntax=Tcl --allow-modules-tool-mismatch"
+	;;
 	# This is for CentOS
 	7 )
 	export env_lang=" --modules-tool=EnvironmentModulesC --module-syntax=Tcl"
 	;;
-	8 )
+	8 | 8.5 )
 	# Centos8 and Rocky8 seem to use Python-3.6.x
 	export env_lang=" --modules-tool=EnvironmentModules --module-syntax=Tcl --allow-modules-tool-mismatch"
 	;;
@@ -310,9 +345,11 @@ fi
 case ${distro} in
 	ubuntu|debian )
 	export src_cmd="."
+	export src_path="/etc/profile"
 	;;
 	centos|rocky )
 	export src_cmd="source"
+	# the src_path is already set further up in the script, in the relevant CentOS/Rock section
 	;;
 esac
 
@@ -331,7 +368,7 @@ esac
 	
 # Now we can add the script which is running EasyBuild and does some of the 
 # post installation
-envsubst '${src_cmd},${lmod_cache},${module_clean1},${module_clean2}' < "$basedir"/easybuild-run.tmpl >> ${filename}
+envsubst '${src_cmd},${src_path},${lmod_cache},${module_clean1},${module_clean2}' < "$basedir"/easybuild-run.tmpl >> ${filename}
 
 # This is apparently needed for Ubuntu:
 if [ ${distro} == "ubuntu" ]; then

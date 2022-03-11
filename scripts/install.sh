@@ -43,17 +43,17 @@ case ${distro} in
 	if [ ! -z "$3" ]; then
         	distro_version="$3"
   		else
-	  	read -p 'Which version do you want to use? (Stretch, Buster, Bullseye)? ' distro_version
+	  	read -p 'Which version do you want to use? (Buster, Bullseye, Bookworm)? ' distro_version
 	fi
 	case ${distro_version} in
-		Stretch|stretch|9 )
-			distro_version="9"
-			;;
 		Buster|buster|10 )
 			distro_version="10"
 			;;
 		Bullseye|bullseye|11 )
 			distro_version="11"
+			;;
+		Bookworm|bookworm|12 )	
+			distro_version="12"
 			;;
 		*)
 			echo "Sorry, your input was not recognised."
@@ -91,6 +91,9 @@ case ${distro} in
 			;;
 		8 )
 			distro_version="8"
+			echo "CentOS-8 is end of life. We suggest you are using Rocky instead."
+			echo "Stopping here."
+			exit 2
 			;;
 		*)
 			echo "Sorry, your input was not recognised."
@@ -103,11 +106,20 @@ case ${distro} in
 	if [ ! -z "$3" ]; then
         	distro_version="$3"
   		else
-	  	read -p 'Which version do you want to use? (8)? ' distro_version
+	  	read -p 'Which version do you want to use? (8, 8.3, 8.4, 8.5)? ' distro_version
 	fi
 	case ${distro_version} in
 		8 )
 			distro_version="8"
+			;;
+		8.3 )
+			distro_version="8.3"
+			;;
+		8.4 )
+			distro_version="8.4"
+			;;
+		8.5 )
+			distro_version="8.5"
 			;;
 		*)
 			echo "Sorry, your input was not recognised."
