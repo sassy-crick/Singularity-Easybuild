@@ -67,7 +67,7 @@ for i in "${ITEM[@]}"; do
 	     echo ""
 	     echo_red "CentOS-8 is end of life and as such no longer supported."
 	     echo_red "We suggest to use the Rocky project instead."
-	     echo_yellow "However, you can use the archived version 8.5.2111 at your own risk!."
+	     echo_yellow "However, you can use the archived version 8.5.2111 at your own risk!"
 	     ;;
 	     centos7 )
 	     distro="centos"
