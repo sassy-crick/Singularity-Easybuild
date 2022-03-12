@@ -14,6 +14,24 @@ ebversion="4.5.3"
 # Where is the script located?
 basedir="$(dirname $(readlink -f "$0"))"
 
+# Some colour to make things a bit more obvious
+function echo_green() {
+    echo -e "\e[32m$1\e[0m"
+}
+
+function echo_red() {
+    echo -e "\e[31m$1\e[0m"
+}
+
+function echo_yellow() {
+    echo -e "\e[33m$1\e[0m"
+}
+
+function fatal_error() {
+    echo_red "ERROR: $1" >&2
+    exit 1
+}
+
 IFS='-' read -ra ITEM <<<"${0%.sh}"
 for i in "${ITEM[@]}"; do
      case ${i} in
@@ -36,18 +54,20 @@ for i in "${ITEM[@]}"; do
 	     debian9 )
 	     distro="debian"
 	     # Debian Stretch is EOL, so we drop the support for it here:
-	     echo "Debian Stretch is end of life and as such no longer supported."
-	     echo "Please use one of the newer versions."
-	     echo "We are stopping here."
+	     echo ""
+	     echo_red "Debian Stretch is end of life and as such no longer supported."
+	     echo_red "Please use one of the newer versions."
+	     echo_red "We are stopping here."
 	     exit 2
 	     ;;
 	     centos8 )
 	     distro="centos"
 	     export distro_version="8"
-	     echo "CentOS-8 is end of life and as such no longer supported."
-	     echo "We suggest to use the Rocky project instead."
-	     echo "We are stopping here."
-	     exit 2
+	     # CentOS-8 ies EOL but we leave it in here for now
+	     echo ""
+	     echo_red "CentOS-8 is end of life and as such no longer supported."
+	     echo_red "We suggest to use the Rocky project instead."
+	     echo_yellow "However, you can use the archived version 8.5.2111 at your own risk!."
 	     ;;
 	     centos7 )
 	     distro="centos"
@@ -99,7 +119,7 @@ else
     echo "The syntax is:"
     echo 'author="YOUR NAME"'
     echo 'email="EMAIL ADDRESS"'
-    echo 'eb_version="4.4.1"'
+    echo 'eb_version="4.5.4"'
     author=''
     email=''
     export eb_version=${ebversion}
@@ -184,8 +204,13 @@ if [ ${distro} == "centos" ]; then
 	# For now we leave it in here for reference with the aim to get it maybe working at one point
 	# together with CentOS-9. Maybe. 
 	if [ ${distro_version} == "8" ]; then
-	export distro_url="http://mirror.centos.org/centos-%{OSVERSION}/%{OSVERSION}/BaseOS/x86_64/os"
+	export distro_url="https://vault.centos.org/8.5.2111/BaseOS/x86_64/os"
 	envsubst '${mod},${distro_url},${distro_version}' < "$basedir"/centos-template.tmpl > ${filename} 
+sed -i "/%post/a \
+# This is needed as CetnOS-8 is now EOL and thus the URLs need to be changed \n\
+sed -i -e \"s|mirrorlist=|#mirrorlist=|g\" /etc/yum.repos.d/CentOS-* \n\
+sed -i -e \"s|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g\" /etc/yum.repos.d/CentOS-*" ${filename}
+
 sed -i "/epel-release/a \
 # This is needed for the change to CentOS8 \n\
 yum install --quiet --assumeyes dnf-plugins-core \n\
@@ -392,7 +417,7 @@ echo "EasyBuild-version ${eb_version}" >> ${filename}
 echo "EasyConfig-file ${eb_file}"  >> ${filename}
 
 if [ ${oper} == "build" ] && [ -e "$basedir"/container-build.sh ]; then
-	echo "We are now building the container. Buckle up."
+	echo_green "We are now building the container. Buckle up."
 	"$basedir"/container-build.sh ${filename}
 else
 	echo "The Singularity definition file ${filename} has been created."

@@ -7,6 +7,12 @@
 # Where is the script located?
 BASEDIR=$(dirname "$0")
 
+# Some colour
+function echo_red() {
+    echo -e "\e[31m$1\e[0m"
+}
+
+
 # Do we want to create definition file and build the container in one go, 
 # or just create the definition file?
 if [ ! -z "$1" ]; then
@@ -56,8 +62,8 @@ case ${distro} in
 			distro_version="12"
 			;;
 		*)
-			echo "Sorry, your input was not recognised."
-			echo "I am stopping here now."
+			echo_red "Sorry, your input was not recognised."
+			echo_red "I am stopping here now."
 			exit 1
 	esac
 	;;
@@ -73,8 +79,8 @@ case ${distro} in
 			distro_version="20.04"
 			;;
 		*)
-			echo "Sorry, your input was not recognised."
-			echo "I am stopping here now."
+			echo_red "Sorry, your input was not recognised."
+			echo_red "I am stopping here now."
 			exit 1
 	esac
 	;;
@@ -91,13 +97,11 @@ case ${distro} in
 			;;
 		8 )
 			distro_version="8"
-			echo "CentOS-8 is end of life. We suggest you are using Rocky instead."
-			echo "Stopping here."
-			exit 2
+			echo_red "CentOS-8 is end of life. We suggest you are using Rocky instead."
 			;;
 		*)
-			echo "Sorry, your input was not recognised."
-			echo "I am stopping here now."
+			echo_red "Sorry, your input was not recognised."
+			echo_red "I am stopping here now."
 			exit 1
 	esac
 	;;
@@ -106,30 +110,24 @@ case ${distro} in
 	if [ ! -z "$3" ]; then
         	distro_version="$3"
   		else
-	  	read -p 'Which version do you want to use? (8, 8.3, 8.4, 8.5)? ' distro_version
+	  	read -p 'Which version do you want to use? (8, 8.5)? ' distro_version
 	fi
 	case ${distro_version} in
 		8 )
 			distro_version="8"
 			;;
-		8.3 )
-			distro_version="8.3"
-			;;
-		8.4 )
-			distro_version="8.4"
-			;;
 		8.5 )
 			distro_version="8.5"
 			;;
 		*)
-			echo "Sorry, your input was not recognised."
-			echo "I am stopping here now."
+			echo_red "Sorry, your input was not recognised."
+			echo_red "I am stopping here now."
 			exit 1
 	esac
 	;;
 	* )
-	echo "Sorry, your input was not recognised."
-	echo "I am stopping here now."
+	echo_red "Sorry, your input was not recognised."
+	echo_red "I am stopping here now."
 	exit 1
 esac
 
@@ -149,8 +147,8 @@ case ${mod} in
 	mod="envmodules"
 	;;
 	* )
-	echo "Sorry, your input was not recognised"
-	echo "I am stopping here now"
+	echo_red "Sorry, your input was not recognised"
+	echo_red "I am stopping here now"
 	exit 1
 esac
 
