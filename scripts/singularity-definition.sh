@@ -407,7 +407,7 @@ echo "# load module(s) corresponding to installed software" >> ${filename}
 mod1=$(echo "$eb_file" | cut -d '-' -f 1 )
 mod2=$(echo "${eb_file%.eb}" | cut -d '-' -f 2- )
 module_name="$mod1/$mod2"
-echo "module load $module_name " >> ${filename}
+echo "module load -s $module_name " >> ${filename}
 echo " " >> ${filename}
 echo "%labels" >> ${filename}
 if [ ! -z "${author}" ] && [ ! -z ${email} ]; then
